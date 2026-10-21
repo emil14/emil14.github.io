@@ -40,3 +40,7 @@ Every push to `master` runs `.github/workflows/pages.yml` and deploys to https:/
 The workflow explicitly copies the HTML pages, shared CSS/JS and `assets/`. Interview notes and other repository files are excluded.
 
 The former `/emil14/` project site redirects here. Website source lives in `emil14/emil14.github.io`; the `emil14/emil14` repository provides the GitHub profile README.
+
+## Historical project notes
+
+Penoma's 2024 label and EQT Bot's 2023 label are based on Emil's public commits, not the repository creation date. TON Syncer's relationship to EQT Bot was confirmed by Emil in this chat. The EQT Bot hackathon-final story is Emil's first-hand account; the exact event edition and an independent finalist listing have not yet been recovered. Do not attach the dates or organizers of a similarly named TON hackathon without confirming the match.
