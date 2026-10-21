@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can an LLM trade on its own?</title>
+<style>
+  :root{ --ink:#1f2733; --muted:#5c6675; --line:#d9dee7; --line2:#eaeef4;
+    --accent:#3949ab; --accent2:#6b78c9; --head:#f2f4f8; --danger:#b3261e; --gold:#8a6100; --ok:#0f7a52; --btc:#c98a1e; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-snap-type:y mandatory}
+  body{background:#fff;color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  section.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;
+    padding:5vh 6vw;border-bottom:1px solid var(--line2);position:relative}
+  .no{position:absolute;right:3vw;bottom:3vh;color:#aab0bb;font-size:13px;font-variant-numeric:tabular-nums}
+  .kicker{color:var(--muted);font-size:14px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px}
+  h1{font-size:clamp(34px,4.6vw,60px);letter-spacing:-1px;line-height:1.1}
+  h2{font-size:clamp(24px,2.6vw,36px);letter-spacing:-.4px;line-height:1.2;padding-left:14px;border-left:5px solid var(--accent);margin-bottom:3vh}
+  .lead{font-size:clamp(17px,1.6vw,22px);color:var(--muted);margin-top:14px;max-width:900px}
+  .lead b{color:var(--ink)}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  .src{font-size:12px;color:#8a93a1;margin-top:8px} .src a{color:#6b78c9}
+
+  /* ---------- slide 1: timeline ---------- */
+  .tl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:6vh;position:relative}
+  .byline{margin-top:8vh;color:var(--muted);font-size:17px}
+  .tl::before{content:"";position:absolute;left:0;right:0;top:15px;height:3px;background:var(--line);}
+  .tl .rail{position:absolute;left:0;top:15px;height:3px;background:var(--accent);width:0;transition:width 2.4s ease}
+  .in .tl .rail{width:100%}
+  .step{position:relative;padding-right:3vw;opacity:0;transform:translateY(12px);transition:all .6s ease}
+  .in .step{opacity:1;transform:none}
+  .in .step:nth-child(2){transition-delay:.2s} .in .step:nth-child(3){transition-delay:1.0s} .in .step:nth-child(4){transition-delay:1.8s}
+  .dot{width:33px;height:33px;border-radius:50%;background:#fff;border:3px solid var(--accent);position:relative;z-index:1}
+  .step.now .dot{background:var(--accent)}
+  .yr{font-size:clamp(24px,2.4vw,34px);font-weight:800;margin-top:16px;letter-spacing:-.5px}
+  .what{font-weight:700;font-size:18px;margin-top:2px}
+  .step p{color:var(--muted);margin-top:8px;font-size:16px;max-width:330px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;max-width:330px}
+  .chip{font-size:12.5px;padding:3px 9px;border-radius:12px;background:#f7dede;color:#8f1e18;opacity:0;transform:scale(.7);transition:all .35s ease}
+  .in .chip{opacity:1;transform:none}
+  .chip.end{background:var(--ink);color:#fff;font-weight:700}
+  .speed{margin-top:14px;max-width:330px}
+  .speed .row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin:5px 0}
+  .speed .row span{width:86px;flex:none}
+  .speed .bar{height:12px;border-radius:6px;width:0;transition:width 1.4s ease}
+  .in .speed .b1{width:22%;transition-delay:1.4s} .in .speed .b2{width:100%;transition-delay:1.8s}
+  .q{margin-top:14px;font-size:22px;font-weight:800;color:var(--accent);max-width:330px;line-height:1.25}
+
+  /* ---------- slide 2: research ---------- */
+  .strip{margin:0 0 2.5vh}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{border:1px solid var(--line);border-radius:8px;padding:16px 18px 12px;background:#fcfcfd}
+  .card .h{display:flex;align-items:baseline;gap:10px}
+  .card .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;transform:translateY(-2px)}
+  .card .t{font-weight:800;font-size:19px}
+  .card .d{margin-left:auto;font-size:12.5px;color:var(--muted);white-space:nowrap;background:var(--head);padding:2px 8px;border-radius:10px}
+  .card svg{display:block;width:100%;height:auto;margin-top:8px}
+  .card .s{font-size:14px;color:var(--muted);margin-top:4px}
+  .verdict{margin-top:3vh;font-size:clamp(18px,1.7vw,24px);font-weight:700}
+  .verdict span{color:var(--accent)}
+  .grow{transform-box:fill-box;transform-origin:left center;transform:scaleX(0);transition:transform 1.2s ease}
+  .growv{transform-box:fill-box;transform:scaleY(0);transition:transform 1s ease}
+  .up{transform-origin:center bottom} .down{transform-origin:center top}
+  .in .grow,.in .growv{transform:none}
+
+
+  /* slide 1: tests passing */
+  .pass{margin-top:14px;max-width:330px}
+  .ptrack{position:relative;height:14px;background:var(--line2);border-radius:7px}
+  .pfill{height:100%;width:0;background:var(--ok);border-radius:7px;transition:width 2s ease 1.2s}
+  .in .pfill{width:85%}
+  .pgate{position:absolute;left:85%;top:-5px;bottom:-5px;width:3px;background:var(--ink)}
+  .plbl{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px} .plbl b{color:var(--ink)}
+
+  /* slide 2: idea */
+  .map{display:grid;grid-template-columns:130px 1fr 28px 1fr 28px 1.4fr;gap:8px 6px;align-items:center;margin-bottom:3vh;font-size:15px}
+  .ml{font-weight:800;color:var(--muted)} .ml.hl{color:var(--accent)}
+  .mc{border:1px solid var(--line);border-radius:6px;padding:7px 11px;background:#fcfcfd;color:var(--muted)}
+  .mc.hl{border-color:var(--accent);color:var(--ink);font-weight:700;background:#f4f5fc}
+  .ma{text-align:center;color:var(--accent2);font-size:18px}
+  .evo{width:100%;height:auto;max-height:60vh;margin-top:2vh}
+  .evo .v,.evo .r{opacity:0;transition:opacity .4s ease} .in .evo .v,.in .evo .r{opacity:1}
+  .in .evo .loop{animation:dash 1.2s linear infinite} @keyframes dash{to{stroke-dashoffset:-26}}
+  .gatecap{text-align:center;color:var(--muted);font-size:15px;margin-top:4px}
+  .tags{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .tags span{font-size:13px;padding:3px 11px;border-radius:12px;background:var(--head);color:var(--muted);font-weight:700}
+
+  /* slide 4: competence */
+  .comp{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-top:5vh}
+  .cc{border:1px solid var(--line);border-radius:8px;padding:24px 22px;background:#fcfcfd;opacity:0;transform:translateY(12px);transition:all .6s ease}
+  .in .cc{opacity:1;transform:none}
+  .cc .part{font-size:15px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+  .cc .eq{font-size:26px;color:var(--accent2);line-height:1.2;margin:6px 0}
+  .cc b{display:block;font-size:24px;color:var(--ok)}
+  .cc span{display:block;color:var(--muted);margin-top:10px;font-size:15px}
+
+  /* two ideas matrix */
+  .mx{display:grid;grid-template-columns:170px 1fr 1fr;gap:14px;margin-top:3vh}
+  .mxh,.mxr{font-weight:800;color:var(--muted);font-size:16px;align-self:end}
+  .mxr{align-self:center} .mxh small,.mxr small{display:block;font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.3px}
+  .mxh.acc,.mxr.acc{color:var(--accent)}
+  .cell{border:1px solid var(--line);border-radius:8px;padding:18px 20px;background:#fcfcfd;min-height:130px;position:relative}
+  .cell b{display:block;font-size:19px} .cell span{display:block;color:var(--muted);margin-top:6px;font-size:15px}
+  .cell.now{border:2px solid var(--accent);background:#f4f5fc}
+  .cell.both{border:2px dashed var(--accent2)}
+  .cell.dim{opacity:.6}
+  .cell .badge{position:absolute;top:-11px;left:14px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;padding:2px 9px;border-radius:10px;margin:0}
+  .hyp{margin-top:3vh;font-size:18px;color:var(--ink);border-left:4px solid var(--accent2);padding-left:14px}
+  /* research facts */
+  .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:4vh}
+  .fact{border-top:4px solid var(--line);padding-top:16px;display:flex;flex-direction:column}
+  .fact.hl{border-top-color:var(--accent)}
+  .fact .big{font-size:clamp(34px,3.6vw,52px);font-weight:800;letter-spacing:-1px;line-height:1.05}
+  .fact .big.sm{font-size:clamp(28px,2.7vw,40px);white-space:nowrap;line-height:1.3}
+  .fact .big .neg{color:var(--danger)} .fact .big .pos{color:var(--ok)}
+  .fact .ft{color:var(--muted);font-size:16px;margin-top:12px;flex:1}
+  .fact .fd{margin-top:14px;font-size:12.5px;color:var(--muted);background:var(--head);padding:2px 9px;border-radius:10px;align-self:flex-start}
+  /* divide and conquer */
+  .dc{width:100%;height:auto;max-height:62vh;margin-top:1vh}
+
+  /* cons */
+  .cons{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;margin-top:2vh}
+  .cb{border:1px solid var(--line);border-radius:8px;padding:18px 20px;background:#fcfcfd}
+  .ct{font-weight:800;font-size:19px;margin-bottom:12px}
+  .subbar{display:flex;height:30px;border-radius:5px;overflow:hidden;font-size:13px;font-weight:700}
+  .subbar .rt{width:50%;background:var(--accent);color:#fff;display:flex;align-items:center;padding-left:10px}
+  .subbar .ex{width:50%;background:#dfe3f3;color:var(--accent);display:flex;align-items:center;padding-left:10px}
+  .subl{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .dots{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+  .dr{display:flex;align-items:center;gap:14px}
+  .dl{width:170px;flex:none;font-size:13.5px;color:var(--muted)} .dl b{color:var(--ink)}
+  .dd{display:flex;flex-wrap:wrap;gap:4px}
+  .dd.few i{width:18px;height:18px;border-radius:50%;background:var(--accent)}
+  .dd.many i{width:9px;height:9px;border-radius:50%;background:var(--ok);opacity:0;transition:opacity .3s}
+  .in .dd.many i{opacity:1}
+  .cn{font-size:14.5px;color:var(--muted);margin-top:12px}
+  .mem{width:100%;height:auto}
+  .status{margin-top:2.5vh;font-size:17px;border-left:4px solid var(--danger);padding-left:14px}
+
+  /* product */
+  .prod{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:4vh}
+  .pc{border:1px solid var(--line);border-radius:8px;padding:22px;background:#fcfcfd;opacity:0;transform:translateY(12px);transition:all .6s ease}
+  .in .pc{opacity:1;transform:none} .in .pc:nth-child(2){transition-delay:.3s} .in .pc:nth-child(3){transition-delay:.6s}
+  .pc.acc{border:2px solid var(--accent);background:#f4f5fc}
+  .pc .pk{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .pc b{display:block;font-size:22px;margin-top:10px} .pc b i{font-style:normal;color:var(--muted);font-weight:400}
+  .pc span{display:block;color:var(--muted);margin-top:10px;font-size:15px}
+  .circles{display:flex;justify-content:center;margin-top:6vh}
+  .ci{width:200px;height:200px;border-radius:50%;border:2px solid var(--accent2);background:rgba(107,120,201,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 -14px;padding:0 34px;font-size:13px;color:var(--muted);text-align:center}
+  .ci span{font-weight:800;color:var(--accent);font-size:16px;margin-bottom:4px}
+
+  /* forks */
+  .fork{width:100%;height:auto;max-height:62vh;margin-top:1vh}
+  .fork .n1,.fork .n2,.fork .n3,.fork .e1,.fork .e2,.fork .e3{opacity:0;transition:opacity .5s ease}
+  .in .fork .e1,.in .fork .n1{opacity:1;transition-delay:.2s}
+  .in .fork .e2,.in .fork .n2{opacity:1;transition-delay:.9s}
+  .in .fork .e3,.in .fork .n3{opacity:1;transition-delay:1.6s}
+  /* ---------- slide 3: loop ---------- */
+  .loopwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:4vw;align-items:center}
+  .loopwrap svg{width:100%;height:auto;max-height:70vh}
+  .who{display:flex;flex-direction:column;gap:18px}
+  .who .it{border-left:4px solid var(--ok);padding:4px 0 4px 14px}
+  .who .it b{display:block;font-size:19px}
+  .who .it span{color:var(--muted);font-size:15px}
+  .who .it.q2{border-left-color:var(--line)}
+
+  /* ---------- slide 4: next ---------- */
+  .flow{display:flex;align-items:stretch;gap:0;margin-top:5vh}
+  .fs{flex:1;border:1px solid var(--line);border-radius:8px;padding:22px 22px;background:#fcfcfd;opacity:0;transform:translateX(-14px);transition:all .6s ease}
+  .in .fs{opacity:1;transform:none} .in .fs:nth-of-type(3){transition-delay:.5s} .in .fs:nth-of-type(5){transition-delay:1s}
+  .fs .k{font-size:34px;font-weight:800;color:var(--accent);line-height:1}
+  .fs b{display:block;font-size:20px;margin-top:10px}
+  .fs span{display:block;color:var(--muted);margin-top:6px;font-size:15px}
+  .arr{flex:none;width:48px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:28px}
+</style>
+<style>
+.archive-bar {position:sticky;top:0;z-index:10;padding:14px 6vw;background:#f2f4f8;color:#3e4856;font-size:13px;line-height:1.6;border-bottom:1px solid #d9dee7}
+.archive-bar nav {display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:6px}
+@media(max-width:700px){html{scroll-snap-type:none}section.slide{padding:40px 20px;min-height:auto}.tl,.cons,.comp,.prod,.facts{grid-template-columns:1fr;gap:24px}.tl::before,.rail{display:none}.step{padding-bottom:20px}.circles{flex-wrap:wrap}svg{max-width:100%;height:auto}.cc,.pc,.cb{min-width:0}.facts{grid-template-columns:1fr 1fr}.dr{flex-wrap:wrap}.subbar{height:auto;min-height:44px}.subbar .rt,.subbar .ex{padding:6px;font-size:11px}.byline{margin-top:30px}.no{position:static;text-align:right;margin-top:25px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+</style></head>
+<body><aside class="archive-bar">Archived pitch · 30 September 2026. Early hypotheses and results as presented then; the project has since evolved.<nav aria-label="Presentation navigation"><a href="../../?lang=en">← About MoneyScript</a><a href="../ru/">Русский</a><a href="https://llm-trader-pitch-v1--1prah0whs99xf82ceb561kz76j.birta.link/">Original on Birta ↗</a></nav></aside>
+
+<!-- ================= 0. Титул ================= -->
+<section class="slide in title" id="s0">
+  <div class="kicker">A brainstorming idea</div>
+  <h1>Can an LLM learn to trade on its own?</h1>
+  <div class="lead">The model makes trading decisions, while coding agents improve the system around it.</div>
+  <div class="byline">30 September 2026 · Emil Valeev for Manaraga</div>
+</section>
+
+<!-- ================= 1. Предыстория ================= -->
+<section class="slide in" id="s1">
+  <h2>Where the idea came from</h2>
+
+  <div class="tl">
+    <div class="rail"></div>
+    <div class="step">
+      <div class="dot"></div>
+      <div class="yr">~2022</div>
+            <p>A Go bot for dYdX. It turned out I needed to be a trader.</p>
+      <div class="chips">
+        <span class="chip" style="transition-delay:.5s">order book</span>
+        <span class="chip" style="transition-delay:.65s">slippage</span>
+        <span class="chip" style="transition-delay:.8s">funding</span>
+        <span class="chip" style="transition-delay:.95s">liquidation</span>
+        <span class="chip" style="transition-delay:1.25s">margin</span>
+        <span class="chip end" style="transition-delay:1.9s">dropped it</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="dot"></div>
+      <div class="yr">2026 · PARTYstation</div>
+      <p>Tests capture the old implementation; coding agents generate a replacement until the tests pass.</p>
+      <div class="pass">
+        <div class="ptrack"><div class="pfill"></div><div class="pgate"></div></div>
+        <div class="plbl"><span></span><b>acceptance ≈85%</b></div>
+      </div>
+    </div>
+    <div class="step now">
+      <div class="dot"></div>
+      <div class="yr">Now</div>
+            <p>With a good harness, LLMs can run autonomously, and self-improvement loops have emerged. Returns make an ideal metric.</p>
+      <div class="q">Two ideas →</div>
+    </div>
+  </div>
+  <div class="gatecap" style="margin-top:6vh">Why not 3 years ago? Back then, I had to be the trader and write the code myself.</div>
+  <div class="no">1 / 8</div>
+</section>
+
+<!-- ================= Две идеи ================= -->
+<section class="slide in" id="s2">
+  <h2>Two ideas, two independent choices</h2>
+  <svg class="fork" viewBox="0 0 1000 430" aria-label="Two choices: who decides and who improves">
+    <g font-size="14" font-weight="800" fill="#8a93a1" text-anchor="middle">
+      <text x="325" y="14">who decides?</text><text x="570" y="14">who improves?</text>
+    </g>
+    <!-- рёбра -->
+    <g fill="none" stroke-width="2.5">
+      <path class="e1" d="M 170 215 C 210 215, 210 100, 250 100" stroke="#3949ab"/>
+      <path class="e1" d="M 170 215 C 210 215, 210 330, 250 330" stroke="#aab0bb"/>
+      <path class="e2" d="M 400 100 C 440 100, 440 50, 500 50" stroke="#aab0bb"/>
+      <path class="e2" d="M 400 100 C 440 100, 440 150, 500 150" stroke="#3949ab"/>
+      <path class="e2" d="M 400 330 C 440 330, 440 280, 500 280" stroke="#aab0bb"/>
+      <path class="e2" d="M 400 330 C 440 330, 440 380, 500 380" stroke="#3949ab"/>
+      <g class="e3" stroke="#d9dee7" stroke-dasharray="4 4"><path d="M 640 50 L 690 50"/><path d="M 640 150 L 690 150"/><path d="M 640 280 L 690 280"/><path d="M 640 380 L 690 380"/></g>
+    </g>
+    <!-- корень -->
+    <rect x="0" y="185" width="170" height="60" rx="10" fill="#f2f4f8" stroke="#aab0bb" stroke-width="2"/>
+    <text x="85" y="221" text-anchor="middle" font-size="17" font-weight="800" fill="#1f2733">Trading</text>
+    <!-- развилка 1 -->
+    <g class="n1" font-size="16" font-weight="800" text-anchor="middle">
+      <rect x="250" y="74" width="150" height="52" rx="8" fill="#fff" stroke="#3949ab" stroke-width="2.5"/>
+      <text x="325" y="98" fill="#3949ab">model</text><text x="325" y="116" font-size="11" fill="#6b78c9">IDEA 1</text>
+      <rect x="250" y="304" width="150" height="52" rx="8" fill="#fff" stroke="#aab0bb" stroke-width="2"/>
+      <text x="325" y="336" fill="#5c6675">code</text>
+    </g>
+    <!-- развилка 2 -->
+    <g class="n2" font-size="15" font-weight="800" text-anchor="middle">
+      <rect x="500" y="30" width="140" height="40" rx="8" fill="#fff" stroke="#aab0bb" stroke-width="2"/><text x="570" y="55" fill="#5c6675">human</text>
+      <rect x="500" y="126" width="140" height="48" rx="8" fill="#fff" stroke="#3949ab" stroke-width="2.5"/><text x="570" y="147" fill="#3949ab">coding agents</text><text x="570" y="164" font-size="11" fill="#6b78c9">IDEA 2</text>
+      <rect x="500" y="260" width="140" height="40" rx="8" fill="#fff" stroke="#aab0bb" stroke-width="2"/><text x="570" y="285" fill="#5c6675">human</text>
+      <rect x="500" y="356" width="140" height="48" rx="8" fill="#fff" stroke="#3949ab" stroke-width="2.5"/><text x="570" y="377" fill="#3949ab">coding agents</text><text x="570" y="394" font-size="11" fill="#6b78c9">IDEA 2</text>
+    </g>
+    <!-- листья -->
+    <g class="n3" font-size="15">
+      <rect x="695" y="26" width="305" height="48" rx="8" fill="#3949ab"/>
+      <text x="712" y="55" font-weight="800" fill="#fff">● now: the model trades</text>
+      <rect x="695" y="126" width="305" height="48" rx="8" fill="#fff" stroke="#3949ab" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="712" y="155" font-weight="800" fill="#1f2733">both ideas together</text>
+      <rect x="695" y="256" width="305" height="48" rx="8" fill="#f6f7fa"/>
+      <text x="712" y="285" font-weight="700" fill="#aab0bb">classic algo trading · 2022 ✕</text>
+      <rect x="695" y="356" width="305" height="48" rx="8" fill="#fff" stroke="#3949ab" stroke-width="2"/>
+      <text x="712" y="385" font-weight="800" fill="#1f2733">coding agents write strategies</text>
+    </g>
+  </svg>
+  <div class="hyp">Idea 1 hypothesis: a capable model makes good decisions if given the right inputs with the noise removed.</div>
+  <div class="no">2 / 8</div>
+</section>
+
+<!-- ================= Ресёрч ================= -->
+<section class="slide in" id="s3">
+  <div class="kicker">Public arenas and papers · October 2025 – September 2026</div>
+  <h2>Can models trade? Nobody knows yet</h2>
+  <div class="facts">
+    <div class="fact"><div class="big">43</div><div class="ft">trades by the winner. About 860 are needed to distinguish skill from luck.</div><div class="fd">Oct–Nov 2025</div></div>
+    <div class="fact"><div class="big">0 of 14</div><div class="ft">models beat BTC during a rising market.</div><div class="fd">Aug–Sep 2026</div></div>
+    <div class="fact"><div class="big">43%</div><div class="ft">of the winner’s profit went to fees.</div><div class="fd">Oct–Nov 2025</div></div>
+    <div class="fact hl"><div class="big sm"><span class="neg">−13%</span> → <span class="pos">+19%</span></div><div class="ft">same model, different scaffolding.</div><div class="fd">2026 paper</div></div>
+  </div>
+  <div class="verdict">In the only paired comparison, <span>scaffolding changed the result more than the model did.</span></div>
+  <div class="src">Sources ↗
+    <a href="https://nof1.ai/" target="_blank">Alpha Arena</a> ·
+    <a href="https://www.traderank.ai/how-it-works" target="_blank">TradeRank</a> ·
+    <a href="https://www.agent-engineering.ch/articles/scaffold-dominates-model-in-llm-trading-backtests/" target="_blank">paired scaffolding comparison</a>
+  </div>
+  <div class="no">3 / 8</div>
+</section>
+
+<!-- ================= 2. Идея ================= -->
+<section class="slide in" id="s4">
+  <h2>The idea: a gate measures returns; a coding agent explores variants</h2>
+
+  <svg class="evo" viewBox="0 0 1000 330" aria-label="Evolutionary selection of strategies">
+    <defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6b78c9"/></marker></defs>
+    <!-- гипотезы -->
+    <rect x="0" y="95" width="190" height="80" rx="8" fill="#fff" stroke="#3949ab" stroke-width="2"/>
+    <text x="95" y="128" text-anchor="middle" font-size="16" font-weight="800" fill="#1f2733">Coding agent</text>
+    <text x="95" y="150" text-anchor="middle" font-size="13" fill="#5c6675">writes variants</text>
+    <line x1="195" y1="135" x2="235" y2="135" stroke="#6b78c9" stroke-width="2.5" marker-end="url(#ah2)"/>
+    <!-- варианты -->
+    <g font-size="12.5" fill="#1f2733">
+      <g class="v" style="transition-delay:.2s"><rect x="245" y="20"  width="150" height="30" rx="5" fill="#eef1f8" stroke="#6b78c9"/><text x="258" y="40">variant 1</text></g>
+      <g class="v" style="transition-delay:.35s"><rect x="245" y="60"  width="150" height="30" rx="5" fill="#eef1f8" stroke="#6b78c9"/><text x="258" y="80">variant 2</text></g>
+      <g class="v" style="transition-delay:.5s"><rect x="245" y="100" width="150" height="30" rx="5" fill="#eef1f8" stroke="#6b78c9"/><text x="258" y="120">variant 3</text></g>
+      <g class="v" style="transition-delay:.65s"><rect x="245" y="140" width="150" height="30" rx="5" fill="#eef1f8" stroke="#6b78c9"/><text x="258" y="160">variant 4</text></g>
+      <g class="v" style="transition-delay:.8s"><rect x="245" y="180" width="150" height="30" rx="5" fill="#eef1f8" stroke="#6b78c9"/><text x="258" y="200">variant 5</text></g>
+      <g class="v" style="transition-delay:.95s"><rect x="245" y="220" width="150" height="30" rx="5" fill="#eef1f8" stroke="#6b78c9"/><text x="258" y="240">variant 6</text></g>
+    </g>
+    
+    <text x="320" y="12" text-anchor="middle" font-size="13" fill="#8a93a1">trading system variants</text>
+    <!-- гейт -->
+    <rect x="440" y="10" width="46" height="250" rx="6" fill="#3949ab"/>
+    <text x="463" y="140" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" transform="rotate(-90 463 140)">GATE</text>
+    <g stroke="#aab0bb" stroke-width="1.5" stroke-dasharray="4 4">
+      <line x1="400" y1="35" x2="436" y2="35"/><line x1="400" y1="75" x2="436" y2="75"/><line x1="400" y1="115" x2="436" y2="115"/>
+      <line x1="400" y1="155" x2="436" y2="155"/><line x1="400" y1="195" x2="436" y2="195"/><line x1="400" y1="235" x2="436" y2="235"/>
+    </g>
+    <!-- результат -->
+    <g font-size="13" font-weight="800">
+      <g class="r" style="transition-delay:1.4s"><rect x="530" y="20"  width="130" height="30" rx="5" fill="#f7dede"/><text x="546" y="40" fill="#b3261e">✕ lower PnL</text></g>
+      <g class="r" style="transition-delay:1.5s"><rect x="530" y="60"  width="130" height="30" rx="5" fill="#0f7a52"/><text x="546" y="80" fill="#fff">✓ higher PnL</text></g>
+      <g class="r" style="transition-delay:1.6s"><rect x="530" y="100" width="130" height="30" rx="5" fill="#f7dede"/><text x="546" y="120" fill="#b3261e">✕ lower PnL</text></g>
+      <g class="r" style="transition-delay:1.7s"><rect x="530" y="140" width="130" height="30" rx="5" fill="#f7dede"/><text x="546" y="160" fill="#b3261e">✕ lower PnL</text></g>
+      <g class="r" style="transition-delay:1.8s"><rect x="530" y="180" width="130" height="30" rx="5" fill="#0f7a52"/><text x="546" y="200" fill="#fff">✓ higher PnL</text></g>
+      <g class="r" style="transition-delay:1.9s"><rect x="530" y="220" width="130" height="30" rx="5" fill="#f7dede"/><text x="546" y="240" fill="#b3261e">✕ lower PnL</text></g>
+    </g>
+    <line x1="665" y1="75" x2="745" y2="125" stroke="#0f7a52" stroke-width="2.5" marker-end="url(#ah2)"/>
+    <line x1="665" y1="195" x2="745" y2="148" stroke="#0f7a52" stroke-width="2.5" marker-end="url(#ah2)"/>
+    <!-- отбор -->
+    <rect x="755" y="95" width="245" height="80" rx="8" fill="#fff" stroke="#0f7a52" stroke-width="2.5"/>
+    <text x="877" y="128" text-anchor="middle" font-size="16" font-weight="800" fill="#1f2733">The best survive</text>
+    <text x="877" y="150" text-anchor="middle" font-size="13" fill="#5c6675">seed for the next generation</text>
+    <!-- петля -->
+    <path d="M 877 180 C 877 330, 95 330, 95 180" fill="none" stroke="#6b78c9" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#ah2)" class="loop"/>
+    <text x="486" y="318" text-anchor="middle" font-size="13" font-weight="700" fill="#3949ab">next generation</text>
+  </svg>
+  <div class="gatecap">The gate runs a variant on market data. The one with higher PnL survives.</div>
+  <div class="no">4 / 8</div>
+</section>
+
+<!-- ================= Разделяй и властвуй ================= -->
+<section class="slide in" id="s5">
+  <h2>Divide and conquer: measure each component separately</h2>
+  <svg class="dc" viewBox="0 0 1000 400" aria-label="Breaking the system into components">
+    <defs><marker id="ah3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6b78c9"/></marker></defs>
+    <!-- монолит -->
+    <rect x="0" y="130" width="200" height="100" rx="10" fill="#f2f4f8" stroke="#aab0bb" stroke-width="2"/>
+    <text x="100" y="172" text-anchor="middle" font-size="17" font-weight="800" fill="#1f2733">One system</text>
+    <text x="100" y="196" text-anchor="middle" font-size="13" fill="#5c6675">one metric: PnL</text>
+    <text x="100" y="252" text-anchor="middle" font-size="13" fill="#6b78c9" font-weight="700">split into components →</text>
+
+    <!-- пропоузер -->
+    <g class="dcp">
+      <text x="415" y="32" text-anchor="middle" font-size="12" fill="#8a93a1">runtime model</text>
+      <rect x="300" y="40" width="230" height="84" rx="10" fill="#fff" stroke="#3949ab" stroke-width="2"/>
+      <text x="415" y="76" text-anchor="middle" font-size="17" font-weight="800" fill="#1f2733">Proposes trades</text>
+      <text x="415" y="100" text-anchor="middle" font-size="13" fill="#5c6675">can split further</text>
+      <!-- комбинаторный веер -->
+      <g stroke="#c5cbe8" stroke-width="1.5" fill="none">
+        <path d="M 530 82 C 580 82, 580 22, 620 22"/><path d="M 530 82 C 580 82, 580 62, 620 62"/><path d="M 530 82 C 580 82, 580 102, 620 102"/><path d="M 530 82 C 580 82, 580 142, 620 142"/>
+      </g>
+      <g fill="#dfe3f3"><circle cx="628" cy="22" r="7"/><circle cx="628" cy="62" r="7"/><circle cx="628" cy="102" r="7"/><circle cx="628" cy="142" r="7"/></g>
+      <g stroke="#e3e6f0" stroke-width="1.2" fill="none">
+        <path d="M 635 22 L 670 8"/><path d="M 635 22 L 670 30"/><path d="M 635 62 L 670 50"/><path d="M 635 62 L 670 72"/><path d="M 635 102 L 670 92"/><path d="M 635 102 L 670 114"/><path d="M 635 142 L 670 134"/><path d="M 635 142 L 670 156"/>
+      </g>
+      <text x="690" y="70" font-size="14" font-weight="800" fill="#b3261e">combinatorial explosion</text>
+            <text x="690" y="92" font-size="13" fill="#5c6675">the right approach is unclear</text>
+    </g>
+
+    <!-- ревьюер -->
+    <g class="dcr">
+      <text x="415" y="228" text-anchor="middle" font-size="12" fill="#8a93a1">runtime model</text>
+      <rect x="300" y="236" width="230" height="84" rx="10" fill="#fff" stroke="#0f7a52" stroke-width="2.5"/>
+      <text x="415" y="272" text-anchor="middle" font-size="17" font-weight="800" fill="#1f2733">Reviews trades</text>
+      <text x="415" y="296" text-anchor="middle" font-size="13" fill="#5c6675">tune with evals</text>
+      <!-- петля евала -->
+      <rect x="595" y="206" width="200" height="56" rx="8" fill="#f4f5fc" stroke="#6b78c9"/>
+      <text x="695" y="230" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2733">dataset</text>
+      <text x="695" y="248" text-anchor="middle" font-size="12" fill="#5c6675">known good / bad</text>
+      <rect x="830" y="206" width="170" height="56" rx="8" fill="#f4f5fc" stroke="#6b78c9"/>
+      <text x="915" y="230" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2733">answer = expected?</text>
+      <text x="915" y="248" text-anchor="middle" font-size="12" fill="#5c6675">metric</text>
+      <rect x="720" y="310" width="170" height="56" rx="8" fill="#f4f5fc" stroke="#6b78c9"/>
+      <text x="805" y="334" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2733">coding agent modifies</text>
+      <text x="805" y="352" text-anchor="middle" font-size="12" fill="#5c6675">the reviewer</text>
+      <g stroke="#6b78c9" stroke-width="2" fill="none" marker-end="url(#ah3)">
+        <path d="M 540 262 L 588 240"/>
+        <path d="M 798 234 L 824 234"/>
+        <path d="M 915 266 C 915 300, 910 338, 896 338"/>
+        <path d="M 714 338 C 620 338, 580 320, 540 300"/>
+      </g>
+    </g>
+    <path d="M 205 180 C 260 180, 250 82, 292 82" stroke="#6b78c9" stroke-width="2.5" fill="none" marker-end="url(#ah3)"/>
+    <path d="M 205 180 C 260 180, 250 278, 292 278" stroke="#6b78c9" stroke-width="2.5" fill="none" marker-end="url(#ah3)"/>
+  </svg>
+  <div class="gatecap">Once tuned, a component leaves the search space. It all comes down to the dataset.</div>
+  <div class="no">5 / 8</div>
+</section>
+
+<!-- ================= Минусы ================= -->
+<section class="slide in" id="s6">
+  <h2>Drawbacks: evaluation cost is the main constraint</h2>
+  <div class="cons">
+    <div class="cb">
+      <div class="ct">1. Every model run costs money</div>
+      <div class="sub">
+        <div class="subbar"><div class="rt">hourly runtime · ~50%</div><div class="ex">experiments · ~50%</div></div>
+        <div class="subl">Claude Max 5x subscription</div>
+      </div>
+      <div class="dots">
+        <div class="dr"><div class="dl">LLM configurations<br><b>a handful</b></div><div class="dd few"><i></i><i></i><i></i><i></i></div></div>
+        <div class="dr"><div class="dl">Python strategies<br><b>hundreds, almost free</b></div><div class="dd many">
+          <i style="transition-delay:0.000s"></i><i style="transition-delay:0.015s"></i><i style="transition-delay:0.030s"></i><i style="transition-delay:0.045s"></i><i style="transition-delay:0.060s"></i><i style="transition-delay:0.075s"></i><i style="transition-delay:0.090s"></i><i style="transition-delay:0.105s"></i><i style="transition-delay:0.120s"></i><i style="transition-delay:0.135s"></i><i style="transition-delay:0.150s"></i><i style="transition-delay:0.165s"></i><i style="transition-delay:0.180s"></i><i style="transition-delay:0.195s"></i><i style="transition-delay:0.210s"></i><i style="transition-delay:0.225s"></i><i style="transition-delay:0.240s"></i><i style="transition-delay:0.255s"></i><i style="transition-delay:0.270s"></i><i style="transition-delay:0.285s"></i><i style="transition-delay:0.300s"></i><i style="transition-delay:0.315s"></i><i style="transition-delay:0.330s"></i><i style="transition-delay:0.345s"></i><i style="transition-delay:0.360s"></i><i style="transition-delay:0.375s"></i><i style="transition-delay:0.390s"></i><i style="transition-delay:0.405s"></i><i style="transition-delay:0.420s"></i><i style="transition-delay:0.435s"></i><i style="transition-delay:0.450s"></i><i style="transition-delay:0.465s"></i><i style="transition-delay:0.480s"></i><i style="transition-delay:0.495s"></i><i style="transition-delay:0.510s"></i><i style="transition-delay:0.525s"></i><i style="transition-delay:0.540s"></i><i style="transition-delay:0.555s"></i><i style="transition-delay:0.570s"></i><i style="transition-delay:0.585s"></i><i style="transition-delay:0.600s"></i><i style="transition-delay:0.615s"></i><i style="transition-delay:0.630s"></i><i style="transition-delay:0.645s"></i><i style="transition-delay:0.660s"></i><i style="transition-delay:0.675s"></i><i style="transition-delay:0.690s"></i><i style="transition-delay:0.705s"></i><i style="transition-delay:0.720s"></i><i style="transition-delay:0.735s"></i><i style="transition-delay:0.750s"></i><i style="transition-delay:0.765s"></i><i style="transition-delay:0.780s"></i><i style="transition-delay:0.795s"></i><i style="transition-delay:0.810s"></i><i style="transition-delay:0.825s"></i><i style="transition-delay:0.840s"></i><i style="transition-delay:0.855s"></i><i style="transition-delay:0.870s"></i><i style="transition-delay:0.885s"></i><i style="transition-delay:0.900s"></i><i style="transition-delay:0.915s"></i><i style="transition-delay:0.930s"></i><i style="transition-delay:0.945s"></i><i style="transition-delay:0.960s"></i><i style="transition-delay:0.975s"></i><i style="transition-delay:0.990s"></i><i style="transition-delay:1.005s"></i><i style="transition-delay:1.020s"></i><i style="transition-delay:1.035s"></i><i style="transition-delay:1.050s"></i><i style="transition-delay:1.065s"></i><i style="transition-delay:1.080s"></i><i style="transition-delay:1.095s"></i><i style="transition-delay:1.110s"></i><i style="transition-delay:1.125s"></i><i style="transition-delay:1.140s"></i><i style="transition-delay:1.155s"></i><i style="transition-delay:1.170s"></i><i style="transition-delay:1.185s"></i><i style="transition-delay:1.200s"></i><i style="transition-delay:1.215s"></i><i style="transition-delay:1.230s"></i><i style="transition-delay:1.245s"></i><i style="transition-delay:1.260s"></i><i style="transition-delay:1.275s"></i><i style="transition-delay:1.290s"></i><i style="transition-delay:1.305s"></i><i style="transition-delay:1.320s"></i><i style="transition-delay:1.335s"></i><i style="transition-delay:1.350s"></i><i style="transition-delay:1.365s"></i><i style="transition-delay:1.380s"></i><i style="transition-delay:1.395s"></i><i style="transition-delay:1.410s"></i><i style="transition-delay:1.425s"></i><i style="transition-delay:1.440s"></i><i style="transition-delay:1.455s"></i><i style="transition-delay:1.470s"></i><i style="transition-delay:1.485s"></i>
+        </div></div>
+      </div>
+      <div class="cn">But judging code quality still takes expertise.</div>
+    </div>
+    <div class="cb">
+      <div class="ct">2. The model remembers the past</div>
+      <svg class="mem" viewBox="0 0 480 150" aria-label="Clean data only after the model’s release">
+        <text x="0" y="14" font-size="13" fill="#5c6675">current model</text>
+        <rect x="0" y="22" width="330" height="30" rx="4" fill="#f7dede"/>
+        <text x="12" y="42" font-size="13" font-weight="700" fill="#8f1e18">training data — remembered</text>
+        <rect x="330" y="22" width="150" height="30" rx="4" fill="#0f7a52"/>
+        <text x="342" y="42" font-size="13" font-weight="700" fill="#fff">clean data</text>
+        <line x1="330" y1="16" x2="330" y2="58" stroke="#1f2733" stroke-width="2"/>
+        <text x="0" y="90" font-size="13" fill="#5c6675">new model</text>
+        <rect x="0" y="98" width="420" height="30" rx="4" fill="#f7dede"/>
+        <rect x="420" y="98" width="60" height="30" rx="4" fill="#0f7a52"/>
+        <line x1="420" y1="92" x2="420" y2="134" stroke="#1f2733" stroke-width="2"/>
+        <text x="420" y="148" font-size="12" fill="#5c6675" text-anchor="middle">model release</text>
+      </svg>
+      <div class="cn">Evaluate only on data after the model’s release. A new model means collecting fresh data.</div>
+    </div>
+  </div>
+  <div class="status"><b>Where I am now:</b> at first the model made no trades; now it trades at a loss.</div>
+  <div class="no">6 / 8</div>
+</section>
+
+<!-- ================= 4. Компетенции ================= -->
+<section class="slide in" id="s7">
+  <h2>What the company already has</h2>
+  <div class="comp">
+    <div class="cc" style="transition-delay:.1s"><div class="part">gate</div><div class="eq">=</div><b>evals</b><span>People who build them.</span></div>
+    <div class="cc" style="transition-delay:.4s"><div class="part">a system accepted by tests</div><div class="eq">=</div><b>PARTYstation</b><span>We built a system where tests are the main gate, rather than a person.</span></div>
+    <div class="cc" style="transition-delay:.7s"><div class="part">LLM + crypto</div><div class="eq">=</div><b>Maneki Garden</b><span>AI for DeFi portfolios, an adjacent domain.</span></div>
+  </div>
+  <div class="no">7 / 8</div>
+</section>
+
+<!-- ================= Продукт ================= -->
+<section class="slide in" id="s8">
+  <h2>If it works, it could become a product</h2>
+  <p class="lead">Ideally, the investor earns returns <b>without being a trader</b>.</p>
+  <div class="prod">
+    <div class="pc"><div class="pk">Pain point</div><b>Passive income</b><span>Money that works without its owner.</span></div>
+    <div class="pc"><div class="pk">People already pay for workarounds</div><b>Copy trading, bots, AI agents</b><span>Exchanges are releasing tools for AI agents in 2026.</span></div>
+    <div class="pc acc"><div class="pk">Revenue model</div><b>Subscription <i>or</i> % of profits</b></div>
+  </div>
+  <div class="circles">
+    <div class="ci"><span>pain point</span>Passive income</div>
+    <div class="ci"><span>why now</span>Where the idea came from</div>
+    <div class="ci"><span>what we have</span>What the company already has</div>
+  </div>
+  <div class="no">8 / 8</div>
+</section>
+
+<script>
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), {threshold:.35});
+  document.querySelectorAll('section.slide').forEach(s => location.search.includes('static') ? (s.classList.add('in'), location.search.includes('only=') && !location.search.includes('only='+s.id) && (s.style.display='none')) : io.observe(s));
+  document.addEventListener('keydown', e => {
+    const k = e.key, ss = [...document.querySelectorAll('section.slide')];
+    if (!['ArrowRight','ArrowLeft','PageDown','PageUp',' '].includes(k)) return;
+    const i = ss.findIndex(s => Math.abs(s.getBoundingClientRect().top) < innerHeight / 2);
+    const j = (k === 'ArrowLeft' || k === 'PageUp') ? i - 1 : i + 1;
+    if (ss[j]) { e.preventDefault(); ss[j].scrollIntoView({behavior:'smooth'}); }
+  });
+</script>
+</body>
+</html>

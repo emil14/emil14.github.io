@@ -21,6 +21,7 @@ function setLanguage(language) {
   if (ru) current.searchParams.set('lang', 'ru'); else current.searchParams.delete('lang');
   history.replaceState(null, '', current);
   document.querySelectorAll('a[href]').forEach(anchor => {
+    if (anchor.dataset.hrefEn) anchor.setAttribute('href', anchor.dataset[ru ? 'hrefRu' : 'hrefEn']);
     const url = new URL(anchor.getAttribute('href'), location.href);
     if (url.origin !== location.origin || anchor.getAttribute('href').startsWith('#')) return;
     if (ru) url.searchParams.set('lang', 'ru'); else url.searchParams.delete('lang');
