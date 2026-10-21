@@ -91,3 +91,14 @@ footer a:hover { color:var(--accent); }
 
 .project-years { display:block; color:var(--muted); font-size:11px; margin-bottom:6px; }
 .case-heading > .project-years { margin-top:22px; margin-bottom:0; }
+
+.mentions { min-width:0; }
+.mention { display:grid; grid-template-columns:minmax(0,210px) minmax(0,1fr); gap:24px; align-items:start; }
+.mention + .mention { margin-top:30px; padding-top:30px; border-top:1px solid var(--line); }
+.mention-image { display:block; }
+.mention-image img { display:block; width:100%; height:auto; border:1px solid var(--line); }
+.mention h3 { margin:7px 0 10px; font-size:20px; line-height:1.35; letter-spacing:-.4px; }
+.mention .mention-source { font-size:11px; color:var(--muted); }
+.mention p { font-size:14px; line-height:1.7; }
+.mentions .mention-note { margin-top:25px; font-size:11px; color:var(--muted); }
+@media(max-width:560px) { .mention { grid-template-columns:1fr; gap:16px; } .mention-image { max-width:360px; } }

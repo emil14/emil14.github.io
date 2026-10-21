@@ -44,3 +44,5 @@ The former `/emil14/` project site redirects here. Website source lives in `emil
 ## Historical project notes
 
 Penoma's 2024 label and EQT Bot's 2023 label are based on Emil's public commits, not the repository creation date. TON Syncer's relationship to EQT Bot was confirmed by Emil in this chat. The EQT Bot hackathon-final story is Emil's first-hand account; the exact event edition and an independent finalist listing have not yet been recovered. Do not attach the dates or organizers of a similarly named TON hackathon without confirming the match.
+
+Neva mentions are paraphrased from [compilers, 23 September 2026](https://t.me/langdev/101) and [Код и Капуста, 21 February 2025](https://t.me/kodikapusta/2277). The latter was found via Emil’s [forward in the Neva chat](https://t.me/nevalang_chat/143). Preview images are copied from the respective Telegram posts; these are historical coverage, not a current feature checklist.
