@@ -21,7 +21,8 @@ Reference implementation: `projects/railway/index.html`. Older cases predate thi
 
 - Every technical decision needs its **motivation**: what the default option costs, and why we didn't pay that cost. Frame it the Occam way: the complex technology has to justify itself, not the simple one. One weak reason ("one fewer service") is not enough; give the real costs compactly (boxes or a short list).
 - Concept over implementation. Diagrams show roles of components: user → agent ← sources. No script, file, table or function names, no tool lists, no prompt internals.
-- Team without names: "Я, фронтенд-разработчик, QA, DevOps". Role can change over time: "Бэкенд-разработчик, затем техлид".
+- Team without names: "Я, фронтенд-разработчик, QA, DevOps". Role is the headline role, one or two words ("Техлид"), not a career story.
+- No vanity numbers at the top. Counts like "9 sources" or "175 cases" say little out of context and pull attention from role, team and responsibilities. A number belongs inside the section where it means something (e.g. evals).
 - Responsibilities in three columns: Архитектура / Управление командой / Работа с заказчиком ("удержание скоупа" is a good phrase).
 - No operations or bureaucracy: what was or wasn't in requirements, compliance matrices, internal approval steps.
 - Small demo details don't belong (a single feature shown in a demo). Show the system and the decisions.
@@ -47,7 +48,7 @@ Every number must come from a source you checked (repo, tracker, chat). Do not i
 Use the shared classes from `style.css` so the case looks like the others:
 
 1. `div.case-heading`: `p.eyebrow` = "Company → for whom" (e.g. "Manaraga → PARTYstation"), `h1`, `p.case-lead`, `span.project-years`, `ul.case-tags`.
-2. Up to three verified numbers (`.r-stats` pattern) and a meta row: role, period, team, stack.
+2. Meta row right after the heading (`.r-meta`): role, period, team, stack. This is what the reader looks for first.
 3. Responsibilities, three columns.
 4. The system: one short paragraph plus a schematic figure. Boundaries (closed network) are drawn as a dashed zone around the system, not as a box.
 5. One section per key decision, each with motivation and a diagram (e.g. a horizontal pipeline).
@@ -67,7 +68,7 @@ Add the case to the homepage list (`index.html`, `a.project-row`), renumbering t
 
 ## Process
 
-1. Gather facts from sources first. Separate verified facts from assumptions.
+1. Research before writing. Internal sources: work chats, trackers, repos, the employer's public case. Public sources about the client: founder, talks, events, launches, press. Note a source for every fact, separate verified facts from assumptions, and ask the author about gaps instead of guessing.
 2. For a new case or a large rewrite, show a local preview (`python3 -m http.server`) and wait for the author's go-ahead before publishing.
 3. Before pushing: `python3 scripts/check_site.py`, screenshots at 390px and 1280px in both themes and both languages, no horizontal overflow.
 4. Push to `master` and verify the GitHub Pages run and the public URL before reporting it as live.

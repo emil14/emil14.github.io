@@ -13,7 +13,6 @@ button,a,input,textarea { outline-offset:5px; }
 .page { width:min(100%,1440px); margin:auto; padding:0 clamp(22px,5vw,80px); }
 .site-header { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:30px 0 23px; }
 .wordmark { font-size:23px; font-weight:600; letter-spacing:-1px; white-space:nowrap; }
-.wordmark-dot { color:var(--accent); padding-left:2px; }
 .controls { display:flex; align-items:center; gap:22px; }
 .controls button { border:0; background:none; padding:8px 0; min-height:44px; cursor:pointer; font-size:12px; }
 #language span { color:var(--muted); }
