@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Emil Valeev, tech lead of an AI assistant for railway infrastructure engineers in Serbia: architecture, team management and delivery.">
+  <title>AI assistant for Serbia’s railways — Emil Valeev</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}</script>
+  <link rel="stylesheet" href="../../style.css">
+  <script src="../../script.js" defer></script>
+  <noscript><style>.controls { display: none; }</style></noscript>
+  <style>
+    .railway { --grid: color-mix(in srgb, var(--accent) 9%, transparent); --soft: color-mix(in srgb, var(--accent) 7%, var(--bg)); }
+    .railway h2 { font-size: clamp(24px, 2.6vw, 34px); line-height: 1.15; letter-spacing: -.045em; margin: 0 0 12px; text-wrap: balance; }
+    .railway h3 { font-size: 18px; line-height: 1.3; font-weight: 600; letter-spacing: -.02em; margin: 0 0 6px; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .r-lead { max-width: 640px; margin: 0 0 26px; color: var(--muted); font-size: 16px; line-height: 1.6; }
+    .r-section { border-top: 1px solid var(--line); padding: 38px 0 44px; }
+    .r-box { padding: 9px 12px; background: var(--bg); border: 1px solid var(--line); font-size: 14px; line-height: 1.35; }
+    .r-box small { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .r-box.on { border-color: var(--accent); background: var(--soft); }
+    .r-arrow { color: var(--accent); font-size: 18px; line-height: 1; text-align: center; }
+    .r-fig { margin: 0; padding: clamp(16px, 2.6vw, 30px); border: 1px solid var(--line); background-color: var(--panel); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; }
+    .r-fig figcaption { margin: 0 0 16px; font-size: 13px; font-weight: 600; }
+    .r-label { display: block; margin: 0 0 7px; color: var(--muted); font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+
+    .r-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin: 0 0 22px; }
+    .r-stats div { background: var(--bg); padding: 14px 16px 15px; }
+    .r-stats dt { font-size: clamp(28px, 3vw, 40px); line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+    .r-stats dd { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .r-meta { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 16px 0 22px; border-top: 1px solid var(--line); }
+    .r-meta dt { color: var(--muted); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+    .r-meta dd { margin: 3px 0 0; font-size: 14px; line-height: 1.45; }
+
+    .r-roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; list-style: none; padding: 0; margin: 0; }
+    .r-roles li { border-top: 2px solid var(--accent); padding-top: 15px; }
+    .r-roles p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    .r-arch { display: grid; grid-template-columns: minmax(0, .75fr) 24px minmax(0, .85fr) 24px minmax(0, 1.4fr); align-items: center; gap: 10px; }
+    .r-sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .r-guard { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .r-guard .r-box { border-style: dashed; }
+    .r-rag p { max-width: 680px; margin: 0 0 12px; font-size: 15px; line-height: 1.65; }
+    .r-flow { display: grid; grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr); align-items: stretch; gap: 6px; }
+    .r-flow > .r-arrow { align-self: center; }
+    .r-flow .r-box { display: flex; flex-direction: column; justify-content: center; }
+    .r-phase { display: grid; grid-template-columns: 3fr 2fr; gap: 6px; margin-bottom: 8px; }
+    .r-phase span { border-top: 1px solid var(--accent); padding-top: 6px; color: var(--muted); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+    .r-evals { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+    .r-evals p { margin: 0 0 12px; font-size: 15px; line-height: 1.65; }
+    .r-evals dl { margin: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .r-evals dl div { background: var(--bg); padding: 11px 14px; display: flex; align-items: baseline; gap: 12px; }
+    .r-evals dt { font-size: 26px; letter-spacing: -.04em; min-width: 52px; }
+    .r-evals dd { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .r-scope { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
+    .r-scope th { text-align: left; font-weight: 500; color: var(--muted); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 0 16px 10px 0; border-bottom: 1px solid var(--line); }
+    .r-scope td { vertical-align: top; padding: 14px 16px 14px 0; border-bottom: 1px solid var(--line); }
+    .r-scope td:first-child { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 60%, transparent); width: 26%; }
+    .r-scope td:nth-child(2) { font-weight: 500; width: 30%; }
+    .r-scope td:last-child { color: var(--muted); }
+
+    .r-time { list-style: none; padding: 0; margin: 30px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .r-time li { position: relative; padding: 20px 18px 0 0; border-top: 1px solid var(--line); }
+    .r-time li::before { content: ''; position: absolute; top: -6px; left: 0; width: 9px; height: 9px; border: 2px solid var(--accent); border-radius: 50%; background: var(--accent); }
+    .r-time time { color: var(--muted); font-size: 12px; }
+    .r-time strong { display: block; margin: 3px 0 4px; font-size: 15px; font-weight: 600; line-height: 1.3; }
+    .r-time p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .r-materials { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px 40px; align-items: start; }
+    .r-video { display: inline-flex; align-items: center; gap: 17px; font-size: 14px; }
+    .r-video img { display: block; width: 150px; height: auto; border: 1px solid var(--line); }
+    .r-video small { display: block; color: var(--muted); }
+    .r-video span span { color: var(--accent); }
+    .r-video:hover span span { text-decoration: underline; text-underline-offset: 4px; }
+    .r-links { display: grid; gap: 2px; }
+    .r-links .r-label { margin-top: 12px; }
+    .r-links .r-label:first-child { margin-top: 0; }
+
+    @media (max-width: 900px) {
+      .r-evals { grid-template-columns: 1fr; }
+      .r-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .r-arch, .r-flow { grid-template-columns: 1fr; }
+      .r-arch > .r-arrow, .r-flow > .r-arrow { transform: rotate(90deg); }
+      .r-phase { display: none; }
+      .r-time { grid-template-columns: 1fr; }
+      .r-time li { border-top: 0; border-left: 1px solid var(--line); padding: 0 0 22px 20px; }
+      .r-time li:last-child { padding-bottom: 0; border-color: transparent; }
+      .r-time li::before { top: 4px; left: -6px; }
+    }
+    @media (max-width: 640px) {
+      .r-stats { grid-template-columns: 1fr; }
+      .r-roles { grid-template-columns: 1fr; gap: 26px; }
+      .r-sources, .r-guard { grid-template-columns: 1fr; }
+      .r-materials { grid-template-columns: 1fr; }
+      .r-scope thead { display: none; }
+      .r-scope tr { display: block; padding: 12px 0; border-bottom: 1px solid var(--line); }
+      .r-scope td { display: block; width: auto !important; padding: 2px 0; border: 0; }
+    }
+  </style>
+</head>
+<body data-title-en="AI assistant for Serbia’s railways" data-title-ru="AI-ассистент для железных дорог Сербии">
+  <a class="skip-link" data-en="Skip to content" data-ru="К содержимому" href="#main">Skip to content</a>
+  <div class="page">
+    <header class="site-header">
+      <a class="wordmark" href="../../" aria-label="Emil Valeev — home">Emil Valeev<span class="wordmark-dot" aria-hidden="true">.</span></a>
+      <div class="controls">
+        <button id="language" type="button" aria-label="Switch to Russian">EN <span>/ RU</span></button>
+        <button id="theme" type="button" role="switch" aria-checked="false" aria-label="Dark theme"><span aria-hidden="true">◐</span></button>
+      </div>
+    </header>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="nav-link current" data-en="Projects" data-ru="Проекты" href="../../">Projects</a>
+      <a class="nav-link" data-en="Open source" data-ru="Open source" href="../../open-source/">Open source</a>
+      <a class="nav-link" data-en="Writing &amp; video" data-ru="Тексты и видео" href="../../writing/">Writing &amp; video</a>
+      <a class="nav-link" data-en="Contact" data-ru="Контакты" href="../../contact/">Contact</a>
+    </nav>
+    <main class="railway" id="main">
+      <a class="back-link" data-en="← All projects" data-ru="← Все проекты" href="../../">← All projects</a>
+      <article class="case">
+        <div class="case-heading">
+          <p class="eyebrow" data-en="Manaraga → Railway infrastructure" data-ru="Manaraga → Железнодорожная инфраструктура">Manaraga → Railway infrastructure</p>
+          <h1 data-en="AI assistant for Serbia’s railways" data-ru="AI-ассистент для железных дорог Сербии">AI assistant for Serbia’s railways</h1>
+          <p class="case-lead" data-en="An assistant for railway infrastructure engineers. They ask about equipment, the network or a maintenance procedure, and it pulls the answer from the right system with a reference to the source. I design the system, run the team and handle the work with the customer." data-ru="Ассистент для инженеров железнодорожной инфраструктуры. Они спрашивают про оборудование, сеть или порядок работ, а он достаёт ответ из нужной системы и показывает источник. Я проектирую систему, руковожу командой и веду работу с заказчиком.">An assistant for railway infrastructure engineers. They ask about equipment, the network or a maintenance procedure, and it pulls the answer from the right system with a reference to the source. I design the system, run the team and handle the work with the customer.</p>
+          <span class="project-years" data-en="2025–2026 · Project period" data-ru="2025–2026 · Период проекта">2025–2026 · Project period</span>
+          <ul class="case-tags"><li>Leadership</li><li>LLM agents</li><li>RAG</li></ul>
+        </div>
+        <dl class="r-stats">
+          <div><dt>9</dt><dd data-en="data sources for one agent" data-ru="источников данных для одного агента">data sources for one agent</dd></div>
+          <div><dt>3</dt><dd data-en="languages: Serbian, Russian, English" data-ru="языка: сербский, русский, английский">languages: Serbian, Russian, English</dd></div>
+          <div><dt>175</dt><dd data-en="eval cases, each run three times" data-ru="кейсов в оценке качества, каждый трижды">eval cases, each run three times</dd></div>
+        </dl>
+        <dl class="r-meta">
+          <div><dt data-en="Role" data-ru="Роль">Role</dt><dd data-en="Backend developer, then tech lead" data-ru="Бэкенд-разработчик, затем техлид">Backend developer, then tech lead</dd></div>
+          <div><dt data-en="Period" data-ru="Период">Period</dt><dd data-en="Sep 2025 – Nov 2026" data-ru="Сентябрь 2025 — ноябрь 2026">Sep 2025 – Nov 2026</dd></div>
+          <div><dt data-en="Team" data-ru="Команда">Team</dt><dd data-en="Me, frontend developer, QA, DevOps" data-ru="Я, фронтенд-разработчик, QA, DevOps">Me, frontend developer, QA, DevOps</dd></div>
+          <div><dt data-en="Stack" data-ru="Стек">Stack</dt><dd>Python, PydanticAI, PostgreSQL, Next.js, Docker</dd></div>
+        </dl>
+
+        <section class="r-section" aria-labelledby="role">
+          <h2 id="role" data-en="Responsibilities" data-ru="Зона ответственности">Responsibilities</h2>
+          <ul class="r-roles">
+            <li>
+              <h3 data-en="Architecture" data-ru="Архитектура">Architecture</h3>
+              <p data-en="How the agent works with data sources, user roles and security. Technical decisions and deployment in the customer’s environment." data-ru="Как агент работает с источниками данных, ролями пользователей и безопасностью. Технические решения и развёртывание в среде заказчика.">How the agent works with data sources, user roles and security. Technical decisions and deployment in the customer’s environment.</p>
+            </li>
+            <li>
+              <h3 data-en="Team management" data-ru="Управление командой">Team management</h3>
+              <p data-en="Backlog, planning, dailies, code review. Workstreams split into tasks for development, QA and DevOps." data-ru="Бэклог, планирование, дейли, ревью кода. Направления разбиты на задачи для разработки, QA и DevOps.">Backlog, planning, dailies, code review. Workstreams split into tasks for development, QA and DevOps.</p>
+            </li>
+            <li>
+              <h3 data-en="Customer delivery" data-ru="Работа с заказчиком">Customer delivery</h3>
+              <p data-en="Reading the contract and specs, proposing changes, answering technical questions, preparing acceptance and keeping scope within what was agreed." data-ru="Чтение договора и ТЗ, правки к ним, ответы на технические вопросы, подготовка приёмки и удержание скоупа в согласованных рамках.">Reading the contract and specs, proposing changes, answering technical questions, preparing acceptance and keeping scope within what was agreed.</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="r-section" aria-labelledby="system">
+          <h2 id="system" data-en="One chat, many systems behind it" data-ru="Один чат, за ним много систем">One chat, many systems behind it</h2>
+          <p class="r-lead" data-en="The data an engineer needs is spread across different systems. The agent works out what kind of question it is, goes to the system that owns that fact and answers with a reference. Everything runs in the customer’s closed network, in line with Serbian information security law." data-ru="Данные, которые нужны инженеру, разбросаны по разным системам. Агент понимает, что это за вопрос, идёт в систему, которая отвечает за этот факт, и отвечает со ссылкой. Всё работает в закрытом контуре заказчика, по требованиям сербского законодательства об информационной безопасности.">The data an engineer needs is spread across different systems. The agent works out what kind of question it is, goes to the system that owns that fact and answers with a reference. Everything runs in the customer’s closed network, in line with Serbian information security law.</p>
+          <figure class="r-fig">
+            <figcaption data-en="Architecture, simplified" data-ru="Архитектура, упрощённо">Architecture, simplified</figcaption>
+            <div class="r-arch">
+              <div class="r-box"><span data-en="User" data-ru="Пользователь">User</span><small data-en="several roles; the role decides which sources are available" data-ru="несколько ролей, от роли зависит доступ к источникам">several roles; the role decides which sources are available</small></div>
+              <span class="r-arrow" aria-hidden="true">⇄</span>
+              <div class="r-box on"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="chat in RU · SR · EN: understands the question, picks the source, answers with a reference" data-ru="чат на RU · SR · EN: понимает вопрос, выбирает источник, отвечает со ссылкой">chat in RU · SR · EN: understands the question, picks the source, answers with a reference</small></div>
+              <span class="r-arrow" aria-hidden="true">←</span>
+              <div class="r-sources">
+                <div class="r-box"><span data-en="Documentation" data-ru="Документация">Documentation</span><small data-en="manuals and instructions" data-ru="руководства и инструкции">manuals and instructions</small></div>
+                <div class="r-box"><span data-en="Equipment" data-ru="Оборудование">Equipment</span><small data-en="registry and inventory" data-ru="реестр и инвентаризация">registry and inventory</small></div>
+                <div class="r-box"><span data-en="Network" data-ru="Сеть">Network</span><small data-en="configs and topology" data-ru="конфиги и топология">configs and topology</small></div>
+                <div class="r-box"><span data-en="Monitoring" data-ru="Мониторинг">Monitoring</span><small data-en="live state and alarms" data-ru="живое состояние и аварии">live state and alarms</small></div>
+                <div class="r-box"><span data-en="Directories" data-ru="Справочники">Directories</span><small data-en="phones and contacts" data-ru="телефоны и контакты">phones and contacts</small></div>
+                <div class="r-box"><span data-en="Web search" data-ru="Веб-поиск">Web search</span><small data-en="a purpose-built tool: only selected vendor sites" data-ru="отдельный инструмент: только заданные сайты вендоров">a purpose-built tool: only selected vendor sites</small></div>
+              </div>
+            </div>
+            <div class="r-guard">
+              <div class="r-box"><span data-en="Closed network" data-ru="Закрытый контур">Closed network</span><small data-en="runs inside the customer’s environment" data-ru="работает в среде заказчика">runs inside the customer’s environment</small></div>
+              <div class="r-box"><span>Guardrail</span><small data-en="private data is cut out before the request reaches the model, and again in the answer" data-ru="приватные данные вырезаются перед запросом к модели и ещё раз в ответе">private data is cut out before the request reaches the model, and again in the answer</small></div>
+              <div class="r-box"><span data-en="Security log" data-ru="Журнал безопасности">Security log</span><small data-en="who accessed what, and when" data-ru="кто, когда и к чему обращался">who accessed what, and when</small></div>
+            </div>
+          </figure>
+        </section>
+
+        <section class="r-section r-rag" aria-labelledby="rag">
+          <h2 id="rag" data-en="RAG without vector embeddings" data-ru="RAG без векторных эмбеддингов">RAG without vector embeddings</h2>
+          <p data-en="The usual way to answer questions over documents is a vector database. Equipment manuals already have a table of contents, so I suggested relying on that instead. We tested it in January 2026, it held up, and it is what runs in production. The agent finds the right chapters and reads them whole, so answers point to specific pages and the document edition." data-ru="Обычный путь для вопросов по документам — векторная база. У руководств к оборудованию уже есть оглавление, и я предложил опереться на него. Проверили в январе 2026, подход подтвердился и работает в проде. Агент находит нужные главы и читает их целиком, поэтому ответ ссылается на конкретные страницы и редакцию документа.">The usual way to answer questions over documents is a vector database. Equipment manuals already have a table of contents, so I suggested relying on that instead. We tested it in January 2026, it held up, and it is what runs in production. The agent finds the right chapters and reads them whole, so answers point to specific pages and the document edition.</p>
+          <figure class="r-fig">
+            <figcaption data-en="Pipeline: from a PDF to an answer" data-ru="Пайплайн: от PDF до ответа">Pipeline: from a PDF to an answer</figcaption>
+            <div class="r-phase" aria-hidden="true"><span data-en="Loading" data-ru="Загрузка">Loading</span><span data-en="Answering" data-ru="Ответ">Answering</span></div>
+            <div class="r-flow">
+              <div class="r-box"><span>PDF</span><small data-en="manual or instruction" data-ru="руководство или инструкция">manual or instruction</small></div>
+              <span class="r-arrow" aria-hidden="true">→</span>
+              <div class="r-box"><span data-en="Chapters" data-ru="Главы">Chapters</span><small data-en="split by the table of contents, OCR for scans" data-ru="нарезка по оглавлению, OCR для сканов">split by the table of contents, OCR for scans</small></div>
+              <span class="r-arrow" aria-hidden="true">→</span>
+              <div class="r-box on"><span>PostgreSQL</span><small data-en="a table of chapters with document editions" data-ru="таблица глав с редакциями документов">a table of chapters with document editions</small></div>
+              <span class="r-arrow" aria-hidden="true">→</span>
+              <div class="r-box"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="finds the chapters and reads them whole" data-ru="находит главы и читает их целиком">finds the chapters and reads them whole</small></div>
+              <span class="r-arrow" aria-hidden="true">→</span>
+              <div class="r-box"><span data-en="Answer" data-ru="Ответ">Answer</span><small data-en="with pages and edition date" data-ru="со страницами и датой редакции">with pages and edition date</small></div>
+            </div>
+          </figure>
+        </section>
+
+        <section class="r-section" aria-labelledby="evals">
+          <h2 id="evals" data-en="Evals" data-ru="Оценка качества">Evals</h2>
+          <div class="r-evals">
+            <div>
+              <p data-en="Together with QA we built datasets for each capability: documents, monitoring, inventory, web search. They are used to pick the model and to check releases." data-ru="Вместе с QA собрали датасеты под каждую способность ассистента: документы, мониторинг, инвентарь, веб-поиск. На них выбирали модель и проверяем релизы.">Together with QA we built datasets for each capability: documents, monitoring, inventory, web search. They are used to pick the model and to check releases.</p>
+              <p data-en="The metric took a few tries. An average score hid failures in one of the languages, so I pushed for scoring each criterion by its worst language and counting a case only when all three runs pass." data-ru="С метрикой получилось не сразу. Средний балл скрывал провалы на одном из языков, поэтому я настоял, чтобы каждый критерий считался по худшему языку, а кейс засчитывался, только если прошли все три прогона.">The metric took a few tries. An average score hid failures in one of the languages, so I pushed for scoring each criterion by its worst language and counting a case only when all three runs pass.</p>
+            </div>
+            <dl>
+              <div><dt>8</dt><dd data-en="datasets" data-ru="датасетов">datasets</dd></div>
+              <div><dt>175</dt><dd data-en="cases" data-ru="кейсов">cases</dd></div>
+              <div><dt>3/3</dt><dd data-en="runs to pass" data-ru="прогона для зачёта">runs to pass</dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="r-section" aria-labelledby="scope">
+          <h2 id="scope" data-en="Where we went simpler" data-ru="Где выбрали решение проще">Where we went simpler</h2>
+          <p class="r-lead" data-en="Everyone agrees that extra complexity should be avoided, and everyone keeps tripping over it anyway. Here I managed to hold on to the simple options, and I’m quietly proud of that." data-ru="Все согласны, что лишней сложности надо избегать, и все регулярно на этом спотыкаются. Здесь мне удалось отстоять простые решения, и этим я, пожалуй, горжусь.">Everyone agrees that extra complexity should be avoided, and everyone keeps tripping over it anyway. Here I managed to hold on to the simple options, and I’m quietly proud of that.</p>
+          <table class="r-scope">
+            <thead><tr><th data-en="Could have built" data-ru="Можно было сделать">Could have built</th><th data-en="What we did" data-ru="Что сделали">What we did</th><th data-en="Why" data-ru="Почему">Why</th></tr></thead>
+            <tbody>
+              <tr><td>Kubernetes</td><td>Docker Compose</td><td data-en="Kubernetes was considered; I suggested not bringing it in. Compose is enough for this load and can move to a cluster later without a rewrite." data-ru="Рассматривали Kubernetes, я предложил его не тащить. Для такой нагрузки хватает Compose, а переезд в кластер позже возможен без переделки.">Kubernetes was considered; I suggested not bringing it in. Compose is enough for this load and can move to a cluster later without a rewrite.</td></tr>
+              <tr><td data-en="Vector database" data-ru="Векторная база">Vector database</td><td data-en="Chapters and full-text search in PostgreSQL" data-ru="Главы и полнотекстовый поиск в PostgreSQL">Chapters and full-text search in PostgreSQL</td><td data-en="Manuals already have structure. One fewer service to run in a closed network." data-ru="У руководств уже есть структура. На один сервис меньше в закрытом контуре.">Manuals already have structure. One fewer service to run in a closed network.</td></tr>
+              <tr><td data-en="An agent that watches the network on its own" data-ru="Агент, который сам следит за сетью">An agent that watches the network on its own</td><td data-en="Answers on request from live monitoring" data-ru="Ответы по запросу по живому мониторингу">Answers on request from live monitoring</td><td data-en="An assistant answers questions. Live monitoring data covers what engineers ask." data-ru="Ассистент отвечает на вопросы. Живых данных мониторинга хватает для того, что спрашивают инженеры.">An assistant answers questions. Live monitoring data covers what engineers ask.</td></tr>
+              <tr><td data-en="Recognising an archive of scans" data-ru="Распознавание архива сканов">Recognising an archive of scans</td><td data-en="Left it out" data-ru="Не загружали">Left it out</td><td data-en="All the data the agent needed was already in the registry." data-ru="Все нужные агенту данные уже были в реестре.">All the data the agent needed was already in the registry.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="r-section" aria-labelledby="path">
+          <h2 id="path" data-en="From prototype to handover" data-ru="От прототипа до сдачи">From prototype to handover</h2>
+          <ol class="r-time">
+            <li><time data-en="Autumn 2025" data-ru="Осень 2025">Autumn 2025</time><strong data-en="Start" data-ru="Старт">Start</strong><p data-en="Architecture and the first data sources." data-ru="Архитектура и первые источники данных.">Architecture and the first data sources.</p></li>
+            <li><time data-en="Winter 2025–2026" data-ru="Зима 2025–2026">Winter 2025–2026</time><strong data-en="Prototype" data-ru="Прототип">Prototype</strong><p data-en="A proof of concept on our own infrastructure." data-ru="Proof of concept на нашей инфраструктуре.">A proof of concept on our own infrastructure.</p></li>
+            <li><time data-en="October 2026" data-ru="Октябрь 2026">October 2026</time><strong data-en="Production" data-ru="Прод">Production</strong><p data-en="The system runs in the customer’s environment." data-ru="Система работает в среде заказчика.">The system runs in the customer’s environment.</p></li>
+            <li><time data-en="November 2026" data-ru="Ноябрь 2026">November 2026</time><strong data-en="Handover to the end customer" data-ru="Сдача конечному заказчику">Handover to the end customer</strong><p data-en="Acceptance against the test programme." data-ru="Приёмка по программе испытаний.">Acceptance against the test programme.</p></li>
+          </ol>
+        </section>
+
+        <section class="r-section r-materials" aria-labelledby="more">
+          <h2 id="more" class="visually-hidden" data-en="Materials" data-ru="Материалы">Materials</h2>
+          <a class="r-video" href="https://www.youtube.com/watch?v=Kjd6idUP8mY&t=275s">
+            <img src="https://i.ytimg.com/vi/Kjd6idUP8mY/mqdefault.jpg" alt="" width="320" height="180" loading="lazy" referrerpolicy="no-referrer">
+            <span><span data-en="PDF RAG without embeddings ↗" data-ru="RAG по PDF без векторов ↗">PDF RAG without embeddings ↗</span><small data-en="My talk on this approach · 9 min" data-ru="Мой доклад про этот подход · 9 мин">My talk on this approach · 9 min</small></span>
+          </a>
+          <div class="r-links">
+            <span class="r-label" data-en="More" data-ru="Ещё">More</span>
+            <a class="text-link" data-en="Team case study on Manaraga ↗" data-ru="Кейс команды на сайте Манараги ↗" href="https://manaraga.ai/cases/railway-3l/">Team case study on Manaraga ↗</a>
+            <span class="r-label" data-en="What I studied along the way: my notes (in Russian)" data-ru="Что я изучал по теме: мои конспекты">What I studied along the way: my notes (in Russian)</span>
+            <a class="text-link" data-en="RAG without embeddings, talk by R77 AI ↗" data-ru="RAG без эмбеддингов, доклад R77 AI ↗" href="https://lateral-sun-ec3.notion.site/RAG-265c12418c4a80f49b4deb243d66591e">RAG without embeddings, talk by R77 AI ↗</a>
+            <a class="text-link" data-en="Knowledge Maps in RAG, talk by Rinat Abdullin ↗" data-ru="Knowledge Maps в RAG, доклад Рината Абдуллина ↗" href="https://lateral-sun-ec3.notion.site/Knowledge-Maps-RAG-264c12418c4a80d5b116c30d647a0d66">Knowledge Maps in RAG, talk by Rinat Abdullin ↗</a>
+          </div>
+        </section>
+      </article>
+    </main>
+    <footer><span>© <span id="year">2026</span> Emil Valeev</span><a class="text-link" data-en="Let’s talk ↗" data-ru="Давайте пообщаемся ↗" href="../../contact/">Let’s talk ↗</a></footer>
+  </div>
+</body>
+</html>
