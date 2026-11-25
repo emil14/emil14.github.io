@@ -11,6 +11,6 @@
 
 - Keep the site simple: plain HTML, CSS and JavaScript, no build step.
 - Maintain English and Russian content, light and dark themes, mobile layouts and keyboard accessibility.
-- Follow `.impeccable.md` for design context. Do not invent biographical details or project results.
+- Follow `.impeccable.md` for design context. Write and edit project case studies by `.claude/skills/case-study/SKILL.md`. Do not invent biographical details or project results.
 
 - Link only to repositories verified as publicly accessible without authentication. Do not link private repositories, even when available to the author.

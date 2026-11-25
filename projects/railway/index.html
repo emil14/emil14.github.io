@@ -38,10 +38,22 @@
     .r-roles li { border-top: 2px solid var(--accent); padding-top: 15px; }
     .r-roles p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
-    .r-arch { display: grid; grid-template-columns: minmax(0, .75fr) 24px minmax(0, .85fr) 24px minmax(0, 1.4fr); align-items: center; gap: 10px; }
+    .r-arch { display: grid; grid-template-columns: minmax(0, .7fr) 24px minmax(0, 3fr); align-items: center; gap: 10px; }
+    .r-zone { position: relative; border: 1.5px dashed var(--accent); padding: 26px 14px 14px; background: color-mix(in srgb, var(--accent) 4%, transparent); }
+    .r-zone-label { position: absolute; top: -9px; left: 12px; padding: 0 6px; background: var(--panel); color: var(--accent); font-size: 11px; line-height: 16px; letter-spacing: 1px; text-transform: uppercase; }
+    .r-zone-body { display: grid; grid-template-columns: minmax(0, .85fr) 24px minmax(0, 1.4fr); align-items: center; gap: 10px; }
     .r-sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-    .r-guard { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-    .r-guard .r-box { border-style: dashed; }
+    .r-guard { margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .r-cost { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 4px 0 18px; }
+    .r-cost .r-box { background: var(--panel); }
+    html[lang="en"] .r-ru-only, html[lang="ru"] .r-en-only { display: none; }
+    .r-embed { margin: 22px 0 0; max-width: 640px; }
+    .r-yt, .r-embed iframe { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; border: 1px solid var(--line); background: #000; cursor: pointer; }
+    .r-yt img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .r-play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 88%, transparent); color: var(--accent); font-size: 22px; }
+    .r-yt:hover .r-play { background: var(--bg); }
+    .r-yt:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .r-embed figcaption { margin-top: 8px; color: var(--muted); font-size: 13px; }
     .r-rag p { max-width: 680px; margin: 0 0 12px; font-size: 15px; line-height: 1.65; }
     .r-flow { display: grid; grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr); align-items: stretch; gap: 6px; }
     .r-flow > .r-arrow { align-self: center; }
@@ -82,8 +94,9 @@
     @media (max-width: 900px) {
       .r-evals { grid-template-columns: 1fr; }
       .r-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .r-arch, .r-flow { grid-template-columns: 1fr; }
-      .r-arch > .r-arrow, .r-flow > .r-arrow { transform: rotate(90deg); }
+      .r-arch, .r-zone-body, .r-flow { grid-template-columns: 1fr; }
+      .r-arch > .r-arrow, .r-zone-body > .r-arrow, .r-flow > .r-arrow { transform: rotate(90deg); }
+      .r-cost { grid-template-columns: 1fr; }
       .r-phase { display: none; }
       .r-time { grid-template-columns: 1fr; }
       .r-time li { border-top: 0; border-left: 1px solid var(--line); padding: 0 0 22px 20px; }
@@ -94,6 +107,7 @@
       .r-stats { grid-template-columns: 1fr; }
       .r-roles { grid-template-columns: 1fr; gap: 26px; }
       .r-sources, .r-guard { grid-template-columns: 1fr; }
+      .r-zone { padding: 24px 10px 10px; }
       .r-materials { grid-template-columns: 1fr; }
       .r-scope thead { display: none; }
       .r-scope tr { display: block; padding: 12px 0; border-bottom: 1px solid var(--line); }
@@ -165,28 +179,38 @@
             <div class="r-arch">
               <div class="r-box"><span data-en="User" data-ru="Пользователь">User</span><small data-en="several roles; the role decides which sources are available" data-ru="несколько ролей, от роли зависит доступ к источникам">several roles; the role decides which sources are available</small></div>
               <span class="r-arrow" aria-hidden="true">⇄</span>
-              <div class="r-box on"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="chat in RU · SR · EN: understands the question, picks the source, answers with a reference" data-ru="чат на RU · SR · EN: понимает вопрос, выбирает источник, отвечает со ссылкой">chat in RU · SR · EN: understands the question, picks the source, answers with a reference</small></div>
-              <span class="r-arrow" aria-hidden="true">←</span>
-              <div class="r-sources">
-                <div class="r-box"><span data-en="Documentation" data-ru="Документация">Documentation</span><small data-en="manuals and instructions" data-ru="руководства и инструкции">manuals and instructions</small></div>
-                <div class="r-box"><span data-en="Equipment" data-ru="Оборудование">Equipment</span><small data-en="registry and inventory" data-ru="реестр и инвентаризация">registry and inventory</small></div>
-                <div class="r-box"><span data-en="Network" data-ru="Сеть">Network</span><small data-en="configs and topology" data-ru="конфиги и топология">configs and topology</small></div>
-                <div class="r-box"><span data-en="Monitoring" data-ru="Мониторинг">Monitoring</span><small data-en="live state and alarms" data-ru="живое состояние и аварии">live state and alarms</small></div>
-                <div class="r-box"><span data-en="Directories" data-ru="Справочники">Directories</span><small data-en="phones and contacts" data-ru="телефоны и контакты">phones and contacts</small></div>
-                <div class="r-box"><span data-en="Web search" data-ru="Веб-поиск">Web search</span><small data-en="a purpose-built tool: only selected vendor sites" data-ru="отдельный инструмент: только заданные сайты вендоров">a purpose-built tool: only selected vendor sites</small></div>
+              <div class="r-zone">
+                <span class="r-zone-label" data-en="Customer’s closed network" data-ru="Закрытый контур заказчика">Customer’s closed network</span>
+                <div class="r-zone-body">
+                  <div class="r-box on"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="chat in RU · SR · EN: understands the question, picks the source, answers with a reference" data-ru="чат на RU · SR · EN: понимает вопрос, выбирает источник, отвечает со ссылкой">chat in RU · SR · EN: understands the question, picks the source, answers with a reference</small></div>
+                  <span class="r-arrow" aria-hidden="true">←</span>
+                  <div class="r-sources">
+                    <div class="r-box"><span data-en="Documentation" data-ru="Документация">Documentation</span><small data-en="manuals and instructions" data-ru="руководства и инструкции">manuals and instructions</small></div>
+                    <div class="r-box"><span data-en="Equipment" data-ru="Оборудование">Equipment</span><small data-en="registry and inventory" data-ru="реестр и инвентаризация">registry and inventory</small></div>
+                    <div class="r-box"><span data-en="Network" data-ru="Сеть">Network</span><small data-en="configs and topology" data-ru="конфиги и топология">configs and topology</small></div>
+                    <div class="r-box"><span data-en="Monitoring" data-ru="Мониторинг">Monitoring</span><small data-en="live state and alarms" data-ru="живое состояние и аварии">live state and alarms</small></div>
+                    <div class="r-box"><span data-en="Directories" data-ru="Справочники">Directories</span><small data-en="phones and contacts" data-ru="телефоны и контакты">phones and contacts</small></div>
+                    <div class="r-box"><span data-en="Web search" data-ru="Веб-поиск">Web search</span><small data-en="a purpose-built tool: only selected vendor sites" data-ru="отдельный инструмент: только заданные сайты вендоров">a purpose-built tool: only selected vendor sites</small></div>
+                  </div>
+                </div>
+                <div class="r-guard">
+                  <div class="r-box"><span>Guardrail</span><small data-en="private data is cut out before the request reaches the model, and again in the answer" data-ru="приватные данные вырезаются перед запросом к модели и ещё раз в ответе">private data is cut out before the request reaches the model, and again in the answer</small></div>
+                  <div class="r-box"><span data-en="Security log" data-ru="Журнал безопасности">Security log</span><small data-en="who accessed what, and when" data-ru="кто, когда и к чему обращался">who accessed what, and when</small></div>
+                </div>
               </div>
-            </div>
-            <div class="r-guard">
-              <div class="r-box"><span data-en="Closed network" data-ru="Закрытый контур">Closed network</span><small data-en="runs inside the customer’s environment" data-ru="работает в среде заказчика">runs inside the customer’s environment</small></div>
-              <div class="r-box"><span>Guardrail</span><small data-en="private data is cut out before the request reaches the model, and again in the answer" data-ru="приватные данные вырезаются перед запросом к модели и ещё раз в ответе">private data is cut out before the request reaches the model, and again in the answer</small></div>
-              <div class="r-box"><span data-en="Security log" data-ru="Журнал безопасности">Security log</span><small data-en="who accessed what, and when" data-ru="кто, когда и к чему обращался">who accessed what, and when</small></div>
             </div>
           </figure>
         </section>
 
         <section class="r-section r-rag" aria-labelledby="rag">
           <h2 id="rag" data-en="RAG without vector embeddings" data-ru="RAG без векторных эмбеддингов">RAG without vector embeddings</h2>
-          <p data-en="The usual way to answer questions over documents is a vector database. Equipment manuals already have a table of contents, so I suggested relying on that instead. We tested it in January 2026, it held up, and it is what runs in production. The agent finds the right chapters and reads them whole, so answers point to specific pages and the document edition." data-ru="Обычный путь для вопросов по документам — векторная база. У руководств к оборудованию уже есть оглавление, и я предложил опереться на него. Проверили в январе 2026, подход подтвердился и работает в проде. Агент находит нужные главы и читает их целиком, поэтому ответ ссылается на конкретные страницы и редакцию документа.">The usual way to answer questions over documents is a vector database. Equipment manuals already have a table of contents, so I suggested relying on that instead. We tested it in January 2026, it held up, and it is what runs in production. The agent finds the right chapters and reads them whole, so answers point to specific pages and the document edition.</p>
+          <p data-en="The usual way to answer questions over documents is a vector database. The better question, though, is not “why no vectors” but “why vectors”. Text is the most natural format for an LLM, and vectors come at a cost:" data-ru="Обычный путь для вопросов по документам — векторная база. Но правильнее спрашивать не «почему без векторов», а «зачем векторы». Текст — самый естественный формат для LLM, а у векторов есть цена:">The usual way to answer questions over documents is a vector database. The better question, though, is not “why no vectors” but “why vectors”. Text is the most natural format for an LLM, and vectors come at a cost:</p>
+          <div class="r-cost">
+            <div class="r-box"><span data-en="Embedding model" data-ru="Модель эмбеддингов">Embedding model</span><small data-en="has to be hosted or paid for, and switching models means re-indexing everything" data-ru="её надо развернуть или оплачивать, а при смене модели переиндексировать всё">has to be hosted or paid for, and switching models means re-indexing everything</small></div>
+            <div class="r-box"><span data-en="Sync" data-ru="Синхронизация">Sync</span><small data-en="every document change means recomputing vectors: a background process, a queue, workers" data-ru="каждое изменение документов — пересчёт векторов: фоновый процесс, очередь, воркеры">every document change means recomputing vectors: a background process, a queue, workers</small></div>
+            <div class="r-box"><span data-en="Debugging" data-ru="Отладка">Debugging</span><small data-en="you can’t read vectors, while text is right there in plain psql" data-ru="векторы не прочитать глазами, а текст видно в обычном psql">you can’t read vectors, while text is right there in plain psql</small></div>
+          </div>
+          <p data-en="Without a reason to pay that cost, we take the simpler option. Equipment manuals already have a table of contents, so I suggested relying on it: the agent finds the right chapters and cites specific pages and the document edition. We tested it in January 2026, it held up, and it is what runs in production." data-ru="Если причины платить эту цену нет, берём решение проще. У руководств к оборудованию уже есть оглавление, и я предложил опереться на него: агент находит нужные главы и ссылается на конкретные страницы и редакцию документа. Проверили в январе 2026, подход подтвердился и работает в проде.">Without a reason to pay that cost, we take the simpler option. Equipment manuals already have a table of contents, so I suggested relying on it: the agent finds the right chapters and cites specific pages and the document edition. We tested it in January 2026, it held up, and it is what runs in production.</p>
           <figure class="r-fig">
             <figcaption data-en="Pipeline: from a PDF to an answer" data-ru="Пайплайн: от PDF до ответа">Pipeline: from a PDF to an answer</figcaption>
             <div class="r-phase" aria-hidden="true"><span data-en="Loading" data-ru="Загрузка">Loading</span><span data-en="Answering" data-ru="Ответ">Answering</span></div>
@@ -197,10 +221,14 @@
               <span class="r-arrow" aria-hidden="true">→</span>
               <div class="r-box on"><span>PostgreSQL</span><small data-en="a table of chapters with document editions" data-ru="таблица глав с редакциями документов">a table of chapters with document editions</small></div>
               <span class="r-arrow" aria-hidden="true">→</span>
-              <div class="r-box"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="finds the chapters and reads them whole" data-ru="находит главы и читает их целиком">finds the chapters and reads them whole</small></div>
+              <div class="r-box"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="finds the right chapters" data-ru="находит нужные главы">finds the right chapters</small></div>
               <span class="r-arrow" aria-hidden="true">→</span>
               <div class="r-box"><span data-en="Answer" data-ru="Ответ">Answer</span><small data-en="with pages and edition date" data-ru="со страницами и датой редакции">with pages and edition date</small></div>
             </div>
+          </figure>
+          <figure class="r-embed r-ru-only">
+            <button class="r-yt" type="button" data-yt="Kjd6idUP8mY" data-start="275" aria-label="Смотреть доклад «RAG по PDF без векторов»"><img src="https://i.ytimg.com/vi/Kjd6idUP8mY/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" referrerpolicy="no-referrer"><span class="r-play" aria-hidden="true">▶</span></button>
+            <figcaption>Мой доклад про этот подход · 9 мин · <a class="text-link" href="https://www.youtube.com/watch?v=Kjd6idUP8mY&amp;t=275s">YouTube ↗</a></figcaption>
           </figure>
         </section>
 
@@ -225,8 +253,8 @@
           <table class="r-scope">
             <thead><tr><th data-en="Could have built" data-ru="Можно было сделать">Could have built</th><th data-en="What we did" data-ru="Что сделали">What we did</th><th data-en="Why" data-ru="Почему">Why</th></tr></thead>
             <tbody>
-              <tr><td>Kubernetes</td><td>Docker Compose</td><td data-en="Kubernetes was considered; I suggested not bringing it in. Compose is enough for this load and can move to a cluster later without a rewrite." data-ru="Рассматривали Kubernetes, я предложил его не тащить. Для такой нагрузки хватает Compose, а переезд в кластер позже возможен без переделки.">Kubernetes was considered; I suggested not bringing it in. Compose is enough for this load and can move to a cluster later without a rewrite.</td></tr>
-              <tr><td data-en="Vector database" data-ru="Векторная база">Vector database</td><td data-en="Chapters and full-text search in PostgreSQL" data-ru="Главы и полнотекстовый поиск в PostgreSQL">Chapters and full-text search in PostgreSQL</td><td data-en="Manuals already have structure. One fewer service to run in a closed network." data-ru="У руководств уже есть структура. На один сервис меньше в закрытом контуре.">Manuals already have structure. One fewer service to run in a closed network.</td></tr>
+              <tr><td>Kubernetes</td><td>Docker Compose</td><td data-en="We considered Kubernetes and decided against it. Compose is enough for this load, and moving to a cluster later doesn’t need a rewrite." data-ru="Рассматривали Kubernetes и решили не тащить. Для такой нагрузки хватает Compose, а переезд в кластер позже возможен без переделки.">We considered Kubernetes and decided against it. Compose is enough for this load, and moving to a cluster later doesn’t need a rewrite.</td></tr>
+              <tr><td data-en="Vector database" data-ru="Векторная база">Vector database</td><td data-en="Chapters and full-text search in PostgreSQL" data-ru="Главы и полнотекстовый поиск в PostgreSQL">Chapters and full-text search in PostgreSQL</td><td data-en="No embedding model, no re-indexing, no background workers, and the data stays readable. More in the RAG section above." data-ru="Без модели эмбеддингов, переиндексации и фоновых воркеров, а данные можно прочитать глазами. Подробнее в разделе про RAG.">No embedding model, no re-indexing, no background workers, and the data stays readable. More in the RAG section above.</td></tr>
               <tr><td data-en="An agent that watches the network on its own" data-ru="Агент, который сам следит за сетью">An agent that watches the network on its own</td><td data-en="Answers on request from live monitoring" data-ru="Ответы по запросу по живому мониторингу">Answers on request from live monitoring</td><td data-en="An assistant answers questions. Live monitoring data covers what engineers ask." data-ru="Ассистент отвечает на вопросы. Живых данных мониторинга хватает для того, что спрашивают инженеры.">An assistant answers questions. Live monitoring data covers what engineers ask.</td></tr>
               <tr><td data-en="Recognising an archive of scans" data-ru="Распознавание архива сканов">Recognising an archive of scans</td><td data-en="Left it out" data-ru="Не загружали">Left it out</td><td data-en="All the data the agent needed was already in the registry." data-ru="Все нужные агенту данные уже были в реестре.">All the data the agent needed was already in the registry.</td></tr>
             </tbody>
@@ -245,9 +273,9 @@
 
         <section class="r-section r-materials" aria-labelledby="more">
           <h2 id="more" class="visually-hidden" data-en="Materials" data-ru="Материалы">Materials</h2>
-          <a class="r-video" href="https://www.youtube.com/watch?v=Kjd6idUP8mY&t=275s">
+          <a class="r-video r-en-only" href="https://www.youtube.com/watch?v=Kjd6idUP8mY&t=275s">
             <img src="https://i.ytimg.com/vi/Kjd6idUP8mY/mqdefault.jpg" alt="" width="320" height="180" loading="lazy" referrerpolicy="no-referrer">
-            <span><span data-en="PDF RAG without embeddings ↗" data-ru="RAG по PDF без векторов ↗">PDF RAG without embeddings ↗</span><small data-en="My talk on this approach · 9 min" data-ru="Мой доклад про этот подход · 9 мин">My talk on this approach · 9 min</small></span>
+            <span><span data-en="PDF RAG without embeddings ↗" data-ru="RAG по PDF без векторов ↗">PDF RAG without embeddings ↗</span><small data-en="My talk on this approach, in Russian · 9 min" data-ru="Мой доклад про этот подход · 9 мин">My talk on this approach, in Russian · 9 min</small></span>
           </a>
           <div class="r-links">
             <span class="r-label" data-en="More" data-ru="Ещё">More</span>
@@ -261,5 +289,16 @@
     </main>
     <footer><span>© <span id="year">2026</span> Emil Valeev</span><a class="text-link" data-en="Let’s talk ↗" data-ru="Давайте пообщаемся ↗" href="../../contact/">Let’s talk ↗</a></footer>
   </div>
+  <script>
+    document.querySelectorAll('.r-yt').forEach(button => button.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = `https://www.youtube-nocookie.com/embed/${button.dataset.yt}?start=${button.dataset.start}&autoplay=1`;
+      frame.title = button.getAttribute('aria-label');
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      button.replaceWith(frame);
+      frame.focus();
+    }));
+  </script>
 </body>
 </html>
