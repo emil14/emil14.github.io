@@ -17,10 +17,13 @@
     .ps h2 { font-size: clamp(24px, 2.6vw, 34px); line-height: 1.15; letter-spacing: -.045em; margin: 0 0 12px; text-wrap: balance; }
     .ps h3 { font-size: 18px; line-height: 1.3; font-weight: 600; letter-spacing: -.02em; margin: 0 0 6px; }
     .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-    .r-lead { max-width: 660px; margin: 0 0 26px; color: var(--muted); font-size: 16px; line-height: 1.6; }
-    .r-text p { max-width: 680px; margin: 0 0 12px; font-size: 15px; line-height: 1.65; }
+    .r-lead { max-width: none; margin: 0 0 26px; color: var(--muted); font-size: 16px; line-height: 1.6; }
+    .r-text p { max-width: none; margin: 0 0 12px; font-size: 15px; line-height: 1.65; }
+    main.ps { max-width: 880px; margin: 0 auto; }
+    .ps .case-heading, .ps .case-lead { max-width: none; }
     .r-section { border-top: 1px solid var(--line); padding: 38px 0 44px; }
-    .r-section.r-pad { padding-bottom: 68px; }
+    .r-section.r-pad { padding-bottom: 88px; }
+    .r-sub-lead { margin: -4px 0 26px; color: var(--muted); font-size: 15px; line-height: 1.6; }
     .r-box { padding: 9px 12px; background: var(--bg); border: 1px solid var(--line); font-size: 14px; line-height: 1.35; }
     .r-box small { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; line-height: 1.4; }
     .r-box.on { border-color: var(--accent); background: var(--soft); }
@@ -84,12 +87,12 @@
     .r-bars ol { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: end; height: 170px; border-bottom: 1px solid var(--line); }
     .r-bars li { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 4px; font-size: 12px; color: var(--muted); }
     .r-bars i { display: block; width: 100%; max-width: 56px; background: var(--accent); opacity: .85; }
-    .r-bars .r-rec { position: absolute; left: 0; right: 0; bottom: 23.3%; height: 0; display: block; border-top: 1.5px dashed var(--text); opacity: .55; pointer-events: none; }
+    .r-bars .r-rec { position: absolute; left: 0; right: 0; bottom: 21.5%; height: 0; display: block; border-top: 1.5px dashed var(--text); opacity: .55; pointer-events: none; }
     .r-bars .r-weeks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 6px; color: var(--muted); font-size: 11px; text-align: center; }
     .r-bars p { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 
     /* callout: no feature freeze */
-    .r-call { max-width: 680px; margin: 38px 0 0; padding: 2px 0 2px 18px; border-left: 2px solid var(--accent); }
+    .r-call { max-width: none; margin: 38px 0 0; padding: 2px 0 2px 18px; border-left: 2px solid var(--accent); }
     .r-call p { margin: 0; font-size: 15px; line-height: 1.65; }
     .r-track { display: grid; gap: 6px; margin: 14px 0 18px; }
     .r-track .r-label { margin: 0; font-size: 10px; }
@@ -122,10 +125,10 @@
     /* screenshots */
     .r-shot { margin: 22px 0 0; }
     .r-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
-    .r-shot.r-wide { max-width: 880px; }
+    .r-shot.r-wide { max-width: none; }
     .r-obs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 48px); align-items: start; }
     .r-obs .r-shot { margin-top: 4px; }
-    .r-shot figcaption { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; max-width: 680px; }
+    .r-shot figcaption { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
     [data-theme="dark"] .r-shot img { filter: brightness(.88); }
 
     .r-scope { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
@@ -145,6 +148,26 @@
     .r-links { display: grid; gap: 2px; }
     .r-links .r-label { margin-top: 12px; }
     .r-links .r-label:first-child { margin-top: 0; }
+
+    .r-conv { margin: 30px 0 0; }
+    .r-conv figcaption { margin: 0 0 16px; font-size: 13px; font-weight: 600; }
+    .r-conv-plot { position: relative; height: 200px; margin-right: 34px; border-bottom: 1px solid var(--muted); }
+    .r-conv svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .r-conv path { fill: none; stroke-width: 2.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+    .r-conv .open { stroke: var(--muted); }
+    .r-conv .done { stroke: var(--accent); }
+    .r-conv .gap { fill: var(--accent); opacity: .14; stroke: none; }
+    .r-conv-end { position: absolute; right: -30px; top: 2px; font-size: 13px; font-weight: 600; }
+    .r-conv-axis { display: flex; justify-content: space-between; margin: 6px 34px 0 0; color: var(--muted); font-size: 11px; }
+    .r-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; color: var(--muted); font-size: 12px; }
+    .r-sw { display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: 3px; background: var(--muted); }
+    .r-sw-done { background: var(--accent); }
+    .r-sw-gap { height: 10px; vertical-align: -1px; background: var(--accent); opacity: .25; }
+    .r-conv.r-anim .open, .r-conv.r-anim .done { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    .r-conv.r-anim .gap, .r-conv.r-anim .r-conv-end { opacity: 0; }
+    .r-conv.r-anim.r-in .open, .r-conv.r-anim.r-in .done { stroke-dashoffset: 0; transition: stroke-dashoffset 2.6s ease-in-out; }
+    .r-conv.r-anim.r-in .gap { opacity: .14; transition: opacity .8s 2.2s; }
+    .r-conv.r-anim.r-in .r-conv-end { opacity: 1; transition: opacity .4s 2.6s; }
 
     @media (max-width: 900px) {
       .r-meta, .r-roles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -214,7 +237,7 @@
           <ul class="r-roles">
             <li>
               <h3 data-en="Architecture" data-ru="Архитектура">Architecture</h3>
-              <p data-en="The target system: one Python codebase for three products, CI/CD, a stand for every branch, observability." data-ru="Целевая система: один код на Python для трёх продуктов, CI/CD, стенд на каждую ветку, наблюдаемость.">The target system: one Python codebase for three products, CI/CD, a stand for every branch, observability.</p>
+              <p data-en="The target system: one Python codebase for three products, CI/CD, a stand for every branch, observability." data-ru="Целевая система: одна кодовая база на Python для трёх продуктов, CI/CD, стенд на каждую ветку, наблюдаемость.">The target system: one Python codebase for three products, CI/CD, a stand for every branch, observability.</p>
             </li>
             <li>
               <h3 data-en="Harness" data-ru="Харнес">Harness</h3>
@@ -239,9 +262,9 @@
             <thead><tr><td></td><th data-en="Before" data-ru="Было">Before</th><th data-en="After" data-ru="Стало">After</th></tr></thead>
             <tbody>
               <tr><th scope="row" data-en="Knowledge" data-ru="Знание о системе">Knowledge</th><td data-en="little written down, and outdated" data-ru="записано мало, и то устарело">little written down, and outdated</td><td data-en="architecture, decision history and known defects in the repo" data-ru="архитектура, история решений и известные дефекты в репозитории">architecture, decision history and known defects in the repo</td></tr>
-              <tr><th scope="row" data-en="Code" data-ru="Код">Code</th><td data-en="several services in PHP and Node.js" data-ru="несколько сервисов на PHP и Node.js">several services in PHP and Node.js</td><td data-en="one Python codebase" data-ru="один код на Python">one Python codebase</td></tr>
+              <tr><th scope="row" data-en="Code" data-ru="Код">Code</th><td data-en="several services in PHP and Node.js" data-ru="несколько сервисов на PHP и Node.js">several services in PHP and Node.js</td><td data-en="one Python codebase" data-ru="одна кодовая база на Python">one Python codebase</td></tr>
               <tr><th scope="row" data-en="Tests" data-ru="Тесты">Tests</th><td data-en="almost none" data-ru="почти нет">almost none</td><td data-en="about 6,500 on API, WebSocket and UI" data-ru="около 6 500 на API, WebSocket и UI">about 6,500 on API, WebSocket and UI</td></tr>
-              <tr><th scope="row" data-en="Releases" data-ru="Выкатка">Releases</th><td data-en="by hand over SSH" data-ru="вручную по SSH">by hand over SSH</td><td data-en="merge to main, the rest is CI/CD" data-ru="мерж в main, дальше CI/CD">merge to main, the rest is CI/CD</td></tr>
+              <tr><th scope="row" data-en="Releases" data-ru="Выкатка">Releases</th><td data-en="by hand over SSH" data-ru="вручную по SSH">by hand over SSH</td><td data-en="each product has its own release cycle: tagged releases through CI/CD" data-ru="у каждого продукта свой релизный цикл: выпуск по тегу через CI/CD">each product has its own release cycle: tagged releases through CI/CD</td></tr>
               <tr><th scope="row" data-en="Rules" data-ru="Правила">Rules</th><td data-en="none for agents" data-ru="для агентов нет">none for agents</td><td data-en="skills, rules, subagents and hooks for the project" data-ru="скиллы, правила, субагенты и хуки под проект">skills, rules, subagents and hooks for the project</td></tr>
             </tbody>
           </table>
@@ -315,7 +338,7 @@
         </section>
 
         <section class="r-section r-text" aria-labelledby="speed">
-          <h2 id="speed" data-en="Speed: one bottleneck after another" data-ru="Скорость: узкие места по очереди">Speed: one bottleneck after another</h2>
+          <h2 id="speed" data-en="A tight deadline: how to speed development up three to four times" data-ru="Сжатые сроки: как разогнать разработку в три-четыре раза">A tight deadline: how to speed development up three to four times</h2>
           <p data-en="When every engineer runs three or four agents at once, everything around the code becomes the slow part. We removed bottlenecks one at a time." data-ru="Когда каждый инженер ведёт по три-четыре агента одновременно, медленным становится всё вокруг кода. Узкие места снимали по очереди.">When every engineer runs three or four agents at once, everything around the code becomes the slow part. We removed bottlenecks one at a time.</p>
           <table class="r-neck">
             <thead><tr><th data-en="Bottleneck" data-ru="Узкое место">Bottleneck</th><th data-en="What we did" data-ru="Что сделали">What we did</th></tr></thead>
@@ -328,16 +351,16 @@
             </tbody>
           </table>
           <figure class="r-bars">
-            <figcaption class="r-label" data-en="Merged PRs per week at the peak of the migration" data-ru="Влитые PR за неделю на пике переноса">Merged PRs per week at the peak of the migration</figcaption>
+            <figcaption class="r-label" data-en="Merged PRs per week" data-ru="Влитые PR за неделю">Merged PRs per week</figcaption>
             <ol>
               <span class="r-rec" aria-hidden="true"></span>
-              <li><span>34</span><i style="height: 28.3%"></i></li>
-              <li><span>93</span><i style="height: 77.5%"></i></li>
-              <li><span>115</span><i style="height: 95.8%"></i></li>
-              <li><span>67</span><i style="height: 55.8%"></i></li>
+              <li><span>34</span><i style="height: 26.2%"></i></li>
+              <li><span>93</span><i style="height: 71.5%"></i></li>
+              <li><span>115</span><i style="height: 88.5%"></i></li>
+              <li><span>126</span><i style="height: 96.9%"></i></li>
             </ol>
-            <div class="r-weeks" aria-hidden="true"><span data-en="late June" data-ru="конец июня">late June</span><span data-en="mid July" data-ru="середина июля">mid July</span><span data-en="late July" data-ru="конец июля">late July</span><span data-en="August" data-ru="август">August</span></div>
-            <p><span data-en="Dashed line: the old system’s record, 28 in its busiest week in four years. A typical week before was about 8. Data from " data-ru="Пунктир — рекорд старой системы: 28 за самую загруженную неделю за четыре года. Обычная неделя до переноса — около 8. Данные из ">Dashed line: the old system’s record, 28 in its busiest week in four years. A typical week before was about 8. Data from </span><a class="text-link" style="padding: 0; font-size: 12px" data-en="Manaraga’s case study" data-ru="кейса Манараги" data-href-en="https://manaraga.ai/en/cases/party-station/" data-href-ru="https://manaraga.ai/cases/party-station/" href="https://manaraga.ai/en/cases/party-station/">Manaraga’s case study</a><span>.</span></p>
+            <div class="r-weeks" aria-hidden="true"><span data-en="late June" data-ru="конец июня">late June</span><span data-en="mid July" data-ru="середина июля">mid July</span><span data-en="late July" data-ru="конец июля">late July</span><span data-en="late October" data-ru="конец октября">late October</span></div>
+            <p><span data-en="Dashed line: the old system’s record, 28 in its busiest week in four years. A typical week before was about 8. Migration weeks are from " data-ru="Пунктир — рекорд старой системы: 28 за самую загруженную неделю за четыре года. Обычная неделя до переноса — около 8. Недели переноса — из ">Dashed line: the old system’s record, 28 in its busiest week in four years. A typical week before was about 8. Migration weeks are from </span><a class="text-link" style="padding: 0; font-size: 12px" data-en="Manaraga’s case study" data-ru="кейса Манараги" data-href-en="https://manaraga.ai/en/cases/party-station/" data-href-ru="https://manaraga.ai/cases/party-station/" href="https://manaraga.ai/en/cases/party-station/">Manaraga’s case study</a><span data-en=", October is from the repository history." data-ru=", октябрь — по истории репозитория.">, October is from the repository history.</span></p>
           </figure>
           <div class="r-call">
             <h3 data-en="Without a feature freeze" data-ru="Без фича-фриза">Without a feature freeze</h3>
@@ -367,7 +390,7 @@
             </div>
           </figure>
           <figure class="r-shot r-wide">
-            <img src="grafana-cutover.jpg" width="1400" height="787" loading="lazy" alt="Grafana panel: WebSocket messages of the new game server on the switchover evening, zero before the switch, then a whole evening of games">
+            <img data-zoom src="grafana-cutover.jpg" width="1400" height="787" loading="lazy" alt="Grafana panel: WebSocket messages of the new game server on the switchover evening, zero before the switch, then a whole evening of games">
             <figcaption><span data-en="The switchover evening: messages between the new game server and players’ devices. Zero until traffic arrived, then the whole evening of games on the new system. Illustration from " data-ru="Вечер переключения: сообщения между новым игровым сервером и устройствами игроков. Ноль, пока не пришёл трафик, а затем весь вечер игр уже на новой системе. Иллюстрация из ">The switchover evening: messages between the new game server and players’ devices. Zero until traffic arrived, then the whole evening of games on the new system. Illustration from </span><a class="text-link" style="padding: 0; font-size: 12px" data-en="Manaraga’s case study" data-ru="кейса Манараги" data-href-en="https://manaraga.ai/en/cases/party-station/" data-href-ru="https://manaraga.ai/cases/party-station/" href="https://manaraga.ai/en/cases/party-station/">Manaraga’s case study</a><span>.</span></figcaption>
           </figure>
           <div class="r-sub r-obs">
@@ -376,7 +399,7 @@
             <p data-en="Together with the harness we built observability on Prometheus and Grafana: metrics, logs and traces. People look at dashboards, agents read the same data from the terminal. So an agent runs a release on its own: rolls it out, watches the rollout, runs smoke tests on production and checks the metrics." data-ru="Вместе с харнесом собрали наблюдаемость на Prometheus и Grafana: метрики, логи и трейсы. Люди смотрят дашборды, агенты читают те же данные из терминала. Поэтому выкатку агент ведёт сам: раскатывает релиз, следит за ним, гоняет смоук-тесты на проде и проверяет метрики.">Together with the harness we built observability on Prometheus and Grafana: metrics, logs and traces. People look at dashboards, agents read the same data from the terminal. So an agent runs a release on its own: rolls it out, watches the rollout, runs smoke tests on production and checks the metrics.</p>
             </div>
             <figure class="r-shot">
-              <img src="grafana-weekend.jpg" width="1400" height="1208" loading="lazy" alt="Grafana panel: production requests per second by response code over a weekend; the 500 and 502 series stay at zero">
+              <img data-zoom src="grafana-weekend.jpg" width="1400" height="1208" loading="lazy" alt="Grafana panel: production requests per second by response code over a weekend; the 500 and 502 series stay at zero">
               <figcaption><span data-en="A weekend on production: requests per second by response code. No 500 or 502 errors (highlighted in the legend). Illustration from " data-ru="Выходные на проде: запросы в секунду по кодам ответа. Ни одной ошибки 500 или 502 (выделены в легенде). Иллюстрация из ">A weekend on production: requests per second by response code. No 500 or 502 errors (highlighted in the legend). Illustration from </span><a class="text-link" style="padding: 0; font-size: 12px" data-en="Manaraga’s case study" data-ru="кейса Манараги" data-href-en="https://manaraga.ai/en/cases/party-station/" data-href-ru="https://manaraga.ai/cases/party-station/" href="https://manaraga.ai/en/cases/party-station/">Manaraga’s case study</a><span>.</span></figcaption>
             </figure>
           </div>
@@ -395,10 +418,24 @@
               <div class="r-box on"><span data-en="Agent" data-ru="Агент">Agent</span><small data-en="takes the RFC into work: branch, PR, gates" data-ru="берёт RFC в работу: ветка, PR, гейты">takes the RFC into work: branch, PR, gates</small></div>
             </div>
           </figure>
+          <p data-en="The rails held real volume. In October the customer’s side handed over what it had built on its own stand, party games and arcades, as ready PRs, each behind its own switch: 52 PRs and about 135,000 lines. The queue went down to zero in ten days." data-ru="Рельсы выдержали настоящий объём. В октябре сторона заказчика передала в монорепо то, что собрала на своём стенде, — патиигры и аркады — готовыми PR, каждый за своим выключателем: 52 PR и около 135 тысяч строк. Очередь разобрали до нуля за десять дней.">The rails held real volume. In October the customer’s side handed over what it had built on its own stand, party games and arcades, as ready PRs, each behind its own switch: 52 PRs and about 135,000 lines. The queue went down to zero in ten days.</p>
+          <figure class="r-conv">
+            <figcaption data-en="Handover of party games and arcades: PRs submitted and processed, cumulative" data-ru="Передача патиигр и аркад: выставлено и обработано PR, нарастающим итогом">Handover of party games and arcades: PRs submitted and processed, cumulative</figcaption>
+            <div class="r-conv-plot">
+              <svg viewBox="0 0 900 240" preserveAspectRatio="none" aria-hidden="true">
+                <path class="gap" d="M0,190 L100,190 L200,158 L300,150 L400,146 L500,114 L600,58 L700,50 L800,22 L900,22 L900,22 L800,54 L700,82 L600,154 L500,158 L400,158 L300,158 L200,186 L100,230 L0,230 Z"/>
+                <path class="open" pathLength="1" d="M0,190 L100,190 L200,158 L300,150 L400,146 L500,114 L600,58 L700,50 L800,22 L900,22"/>
+                <path class="done" pathLength="1" d="M0,230 L100,230 L200,186 L300,158 L400,158 L500,158 L600,154 L700,82 L800,54 L900,22"/>
+              </svg>
+              <span class="r-conv-end">52</span>
+            </div>
+            <div class="r-conv-axis"><span data-en="day 1" data-ru="день 1">day 1</span><span data-en="day 10: nothing waits for a merge" data-ru="день 10: мержа никто не ждёт">day 10: nothing waits for a merge</span></div>
+            <div class="r-legend"><span><i class="r-sw r-sw-open"></i><span data-en="submitted for merge" data-ru="выставлено на мерж">submitted for merge</span></span><span><i class="r-sw r-sw-done"></i><span data-en="processed" data-ru="обработано">processed</span></span><span><i class="r-sw r-sw-gap"></i><span data-en="waiting for a merge" data-ru="ждут мержа">waiting for a merge</span></span></div>
+          </figure>
         </section>
 
         <section class="r-section r-text" aria-labelledby="contours">
-          <h2 id="contours" data-en="Three products from one codebase" data-ru="Три продукта из одного кода">Three products from one codebase</h2>
+          <h2 id="contours" data-en="Three products from one codebase" data-ru="Три продукта из одной кодовой базы">Three products from one codebase</h2>
           <p data-en="The old platform had a separate copy for online cinemas: at the end of 2023 the whole system was copied for partners, and in two and a half years the copies drifted apart." data-ru="У старой платформы была отдельная копия для онлайн-кинотеатров: в конце 2023 года систему целиком скопировали под партнёров, и за два с половиной года копии разошлись.">The old platform had a separate copy for online cinemas: at the end of 2023 the whole system was copied for partners, and in two and a half years the copies drifted apart.</p>
           <figure class="r-fig">
             <figcaption data-en="The price of a copy: every fix twice, and sooner or later the second one is forgotten" data-ru="Цена копии: каждый фикс дважды, и рано или поздно второй забывают">The price of a copy: every fix twice, and sooner or later the second one is forgotten</figcaption>
@@ -421,7 +458,7 @@
             </div>
             <p class="r-note"><span class="r-dot" aria-hidden="true"></span> <span data-en="fix in both copies" data-ru="фикс в обеих копиях">fix in both copies</span> &nbsp; <span class="r-dot h" aria-hidden="true"></span> <span data-en="fix forgotten in the copy" data-ru="фикс забыли в копии">fix forgotten in the copy</span></p>
           </figure>
-          <p data-en="Alongside the migration we designed how to build the cinemas from the same code: the difference between products lives in the deployment profile. There was effectively no English version. The customer asked for one on separate infrastructure, and on the new stack it became the third profile." data-ru="Параллельно с переносом мы спроектировали, как собирать кинотеатры из того же кода: разница между продуктами живёт в профиле развёртывания. Англоязычной версии фактически не было. Заказчик попросил её на отдельной инфраструктуре, и на новом стеке она стала третьим профилем.">Alongside the migration we designed how to build the cinemas from the same code: the difference between products lives in the deployment profile. There was effectively no English version. The customer asked for one on separate infrastructure, and on the new stack it became the third profile.</p>
+          <p data-en="Alongside the migration we designed how to build the cinemas from the same codebase: the difference between products lives in the deployment profile. There was effectively no English version. The customer asked for one on separate infrastructure, and on the new stack it became the third profile." data-ru="Параллельно с переносом мы спроектировали, как собирать кинотеатры из той же кодовой базы: разница между продуктами живёт в профиле развёртывания. Англоязычной версии фактически не было. Заказчик попросил её на отдельной инфраструктуре, и на новом стеке она стала третьим профилем.">Alongside the migration we designed how to build the cinemas from the same codebase: the difference between products lives in the deployment profile. There was effectively no English version. The customer asked for one on separate infrastructure, and on the new stack it became the third profile.</p>
           <figure class="r-fig">
             <figcaption data-en="One build, three profiles" data-ru="Одна сборка, три профиля">One build, three profiles</figcaption>
             <div class="r-build">
@@ -439,6 +476,7 @@
 
         <section class="r-section r-pad" aria-labelledby="scope">
           <h2 id="scope" data-en="Where we chose the simpler option" data-ru="Где выбрали решение проще">Where we chose the simpler option</h2>
+          <p class="r-sub-lead" data-en="A complex option has to pay for itself. Where it didn’t, we kept the simple one." data-ru="Сложное решение должно себя окупать. Где не окупалось, оставляли простое.">A complex option has to pay for itself. Where it didn’t, we kept the simple one.</p>
           <table class="r-scope">
             <thead><tr><th data-en="Could have" data-ru="Можно было сделать">Could have</th><th data-en="What we did" data-ru="Что сделали">What we did</th><th data-en="Why" data-ru="Почему">Why</th></tr></thead>
             <tbody>
@@ -457,7 +495,7 @@
             <li><time data-en="31 August" data-ru="31 августа">31 August</time><strong data-en="Switchover" data-ru="Переключение">Switchover</strong><p data-en="Live traffic on the new system." data-ru="Боевой трафик на новой системе.">Live traffic on the new system.</p></li>
             <li><time data-en="September" data-ru="Сентябрь">September</time><strong data-en="Product rails" data-ru="Продуктовые рельсы">Product rails</strong><p data-en="A feature path from spec to code; cinemas on the new stack." data-ru="Путь фичи от спеки до кода, кинотеатры на новом стеке.">A feature path from spec to code; cinemas on the new stack.</p></li>
             <li><time data-en="October" data-ru="Октябрь">October</time><strong data-en="English version" data-ru="Англоязычная версия">English version</strong><p data-en="Launch and the Shanghai pitch. In parallel, production moved after a cloud provider outage." data-ru="Запуск и питч в Шанхае. Параллельно — переезд прода после аварии у облачного провайдера.">Launch and the Shanghai pitch. In parallel, production moved after a cloud provider outage.</p></li>
-            <li><time data-en="November" data-ru="Ноябрь">November</time><strong data-en="Handover" data-ru="Передача">Handover</strong><p data-en="The repository is with the customer. Merges and production are on their team; infrastructure, CI and the harness are on us." data-ru="Репозиторий у заказчика. Мержи и прод — на их команде, инфраструктура, CI и харнес — на нас.">The repository is with the customer. Merges and production are on their team; infrastructure, CI and the harness are on us.</p></li>
+            <li><time data-en="November" data-ru="Ноябрь">November</time><strong data-en="Handover" data-ru="Передача">Handover</strong><p data-en="The codebase moved to the customer’s GitLab; the infrastructure was theirs from the start. The flow kept growing: 78 merges in the third week of November." data-ru="Кодовая база переехала в GitLab заказчика, инфраструктура и так была его. Поток не падал: 78 мержей за третью неделю ноября.">The codebase moved to the customer’s GitLab; the infrastructure was theirs from the start. The flow kept growing: 78 merges in the third week of November.</p></li>
           </ol>
         </section>
 
@@ -474,5 +512,16 @@
     </main>
     <footer><span>© <span id="year">2026</span> Emil Valeev</span><a class="text-link" data-en="Let’s talk ↗" data-ru="Давайте пообщаемся ↗" href="../../contact/">Let’s talk ↗</a></footer>
   </div>
+  <script>
+    (() => {
+      const chart = document.querySelector('.r-conv');
+      if (!chart || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      chart.classList.add('r-anim');
+      const observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) { chart.classList.add('r-in'); observer.disconnect(); }
+      }, { threshold: 0.5 });
+      observer.observe(chart);
+    })();
+  </script>
 </body>
 </html>

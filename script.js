@@ -15,6 +15,7 @@ function setLanguage(language) {
   document.querySelector('meta[name="description"]').content = ru
     ? `${document.body.dataset.titleRu}. Эмиль Валеев — технический лидер. Бэкенд, прикладные LLM и разработка с coding agents.`
     : `${document.body.dataset.titleEn}. Emil Valeev — Technical Lead. Backend systems, applied LLMs and development with coding agents.`;
+  zoomButtons.forEach(button => button.setAttribute('aria-label', `${ru ? 'Открыть крупно' : 'Open full size'}: ${button.firstChild.alt}`));
   document.querySelector('.site-nav').setAttribute('aria-label', ru ? 'Разделы сайта' : 'Main navigation');
   document.querySelector('.wordmark').setAttribute('aria-label', ru ? 'Эмиль Валеев — главная' : 'Emil Valeev — home');
   const current = new URL(location.href);
@@ -32,6 +33,26 @@ function setTheme(theme) {
   root.dataset.theme = theme;
   themeButton.setAttribute('aria-checked', String(theme === 'dark'));
 }
+const zoomButtons = [...document.querySelectorAll('img[data-zoom]')].map(image => {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'zoom-button';
+  image.replaceWith(button);
+  button.append(image);
+  button.addEventListener('click', () => {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'zoom-dialog';
+    const large = image.cloneNode();
+    large.removeAttribute('loading');
+    large.removeAttribute('data-zoom');
+    dialog.append(large);
+    dialog.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => { dialog.remove(); button.focus(); });
+    document.body.append(dialog);
+    dialog.showModal();
+  });
+  return button;
+});
 const requestedLanguage = new URL(location.href).searchParams.get('lang');
 setLanguage(requestedLanguage === 'ru' || (requestedLanguage === null && readPreference('language') === 'ru') ? 'ru' : 'en');
 setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');

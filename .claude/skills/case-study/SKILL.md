@@ -22,6 +22,7 @@ Reference implementation: `projects/railway/index.html`. Older cases predate thi
 - No self-diminishing statements nobody asked about. "Не трогая клиенты", "только бэкенд", "мы не переписывали X" tell the reader that less was done. If keeping something was a real decision, state it positively with the reason ("транспорт сохранили везде, где это было возможно"); otherwise leave it out.
 - Our own engineering voice. If the employer has a public case on the same project, don't retell it: pick what the tech lead saw and decided, and link to the employer's case for the rest.
 - Russian tech jargon the way practitioners speak it: субагент, скилл, харнес, PR, мерж, ревью, стенд, фича-фриз, роадмап, легаси. Don't translate terms people don't translate («подагент», «пул-реквест» sound wrong); don't write English where Russian is natural.
+- Say "кодовая база" (codebase), not "код", when you mean the system as a whole: «одна кодовая база на Python», «три продукта из одной кодовой базы».
 - Watch words that change meaning: for things we dropped, write "не переносили" / "перенесли только используемые", not "оставили" (reads as "kept in the code").
 
 ## Content
@@ -29,6 +30,7 @@ Reference implementation: `projects/railway/index.html`. Older cases predate thi
 - Title: short, punchy and simple, somewhere between the employer's marketing headline and a dry engineering label. What was done plus two or three hard hooks, with numbers in shorthand: «Миграция PARTYstation: 300K строк легаси, агенты и ноль даунтайма». Not a sentence-story («как агенты перенесли 300 000 строк…» reads as marketing), not an agency pitch («…и теперь один разработчик делает работу целой команды»), not a bare label («Миграция действующей игровой платформы»). Sourced, no claims the case doesn't cover. The lead under it is two or three sentences: what the product is, what we did, the role. Add a number to the lead only if it is impressive on its own; don't repeat the title's hooks in it.
 - Name the concepts you came up with, and explain each in one plain sentence a non-specialist gets («легаси-паритет: пишем тесты вокруг старой системы, пока не позеленеют, потом новую версию, пока не пройдут те же тесты»), not in abstractions («эталон — поведение работающей системы»). Say briefly how you got there. Link the public material that fed into it by name, phrased honestly as one of several («изучали разные готовые подходы, в том числе <repo>»), not as the single origin; check that it opens without authentication. Private specs and notes are described, not linked.
 - State what the deliverable did to the live product when it matters and is sourced ("без остановки продукта", "переключили трафик и наблюдали за раскаткой"), in one clause, not a paragraph.
+- Section titles may carry the stakes when they are sourced: «Сжатые сроки: как разогнать разработку в три-четыре раза» (peak weeks against the old record), not a dry «Скорость: узкие места по очереди».
 - Section titles say what the section is about in plain words, and may use a familiar image («Как съесть слона: режем легаси-монолит на куски», «Три продукта из одного кода»), not a fragment or a colon-joined list.
 - Sections follow the real chronology. If a phase (product rails after the switchover) came before another event (an English launch, a pitch), it goes first on the page too, and the timeline at the end agrees with the section order.
 - Every technical decision needs its **motivation**: what the default option costs, and why we didn't pay that cost. Frame it the Occam way: the complex technology has to justify itself, not the simple one. One weak reason ("one fewer service") is not enough; give the real costs compactly (boxes or a short list).
@@ -41,7 +43,9 @@ Reference implementation: `projects/railway/index.html`. Older cases predate thi
 - Team without names: "Я, фронтенд-разработчик, QA, DevOps". Role is the headline role, one or two words ("Техлид"), not a career story.
 - No vanity numbers at the top. Counts like "9 sources" or "175 cases" say little out of context and pull attention from role, team and responsibilities. A number belongs inside the section where it means something (e.g. evals).
 - Round numbers: "~1 500 сценариев", "~350 дефектов", "неделя приёмки", not "1 486", "355", "8 рабочих дней". Give counts with their structure where it helps («около 1 500 сценариев, разбитых на 19 доменов»).
-- Charts show peaks and contrasts (a peak week against the old record), not totals with a long caption. Productivity metrics only as far as the employer has published them, with a link to the employer's case as the source. Show about half the data points and no exact dates ("конец июля", not "27 июл"): small specifics leak internals.
+- Charts show peaks and contrasts (a peak week against the old record), not totals with a long caption. Productivity metrics only as far as the employer has published them, with a link to the employer's case as the source. Show about half the data points and no exact dates ("конец июля", not "27 июл"): small specifics leak internals. It is fine to pick only the real points that make the trend read up-and-to-the-right and to extend the series past the main phase from the repo history (say so in the caption); never invent or adjust a value.
+- Internal dashboards and reports (e.g. a Birta page with two lines converging as a PR queue drains) are good raw material: redraw them as a minimal figure on the page, optionally animated once when scrolled into view (respect `prefers-reduced-motion`), with only the shape and one or two numbers.
+- Show what happened after handover: where the codebase moved (e.g. the customer's GitLab, on infrastructure that was always theirs) and that the flow of changes kept going, with a number.
 - No interim or internal status figures (what was left on a given date, a sprint snapshot) in a finished case. Show the method instead (how the work was cut, what went first).
 - The employer's case may simplify ("всё за три месяца"); our case covers the real, wider scope and timeline. Don't copy the claim if the page tells a longer story.
 - Visual proof is welcome: screenshots the author made for the employer's public case (dashboards on the switchover evening, production graphs) can be reused. Every borrowed image gets an unobtrusive credit at the end of its caption with a link: «Иллюстрация из кейса Манараги». Keep the text around them superficial: what people and agents can see, not how the stack is wired.
@@ -80,7 +84,7 @@ Use the shared classes from `style.css` so the case looks like the others:
 4. The system: one short paragraph plus a schematic figure. Boundaries (closed network) are drawn as a dashed zone around the system, not as a box.
 5. One section per key decision, each with motivation and a diagram (e.g. a horizontal pipeline).
 6. Quality/evals if there were any: what was measured and what Emil changed in the method.
-7. "Где выбрали решение проще": could have built / what we did / why.
+7. "Где выбрали решение проще": a one-line subtitle under the heading, then could have built / what we did / why.
 8. Timeline ending at the real current state.
 9. Materials: talks, the employer's public case, notes.
 
@@ -91,7 +95,9 @@ Add the case to the homepage list (`index.html`, `a.project-row`), renumbering t
 - Both languages are full versions. `data-en` / `data-ru` go on leaf elements only, because `script.js` replaces `textContent`.
 - Language-only blocks use `html[lang="en"] .r-ru-only, html[lang="ru"] .r-en-only { display: none; }`. Example: a Russian talk is embedded inline in the RU version (click-to-load `youtube-nocookie` iframe), while EN shows only a small link marked "in Russian".
 - Light and dark themes via CSS variables (`--bg`, `--text`, `--muted`, `--line`, `--accent`, `--panel`); no hardcoded colors besides video backgrounds.
-- Mobile: grids collapse to one column at 900/640px, arrows rotate 90°.
+- Layout: the case `main` is a centred reading column (`max-width: 880px; margin: 0 auto`) and text, leads and figures take its full width. Don't cap paragraphs at ~680px inside a wider container: it leaves an empty right column that looks reserved for something.
+- Screenshots are zoomable: put `data-zoom` on the `img`, and `script.js` wraps it in a button that opens a full-size dialog (Esc or click closes).
+- Mobile: grids collapse to one column at 900/640px, arrows rotate 90°. Check every page of the site at 360/390px, not only the case you edited.
 - Figures must read in both themes. Dashed borders and `--line`-coloured strokes almost vanish in the light theme; use `--accent` or `--muted` for anything that carries meaning, and check light-theme screenshots specifically. Comparisons (Было / Стало) are a real `<table>` with row headers and hairline rows, outside any grid-background figure: a table-like grid of boxes over the squared background is unreadable in the dark theme. Keep the grid background for diagrams only.
 - A standalone chart is centred, with its label and caption centred too. Leave extra space after a table that ends a section.
 - Small minimalist illustrations (dots on parallel lines, diverging branches) are welcome where they replace a paragraph. Build them from HTML or inline SVG with CSS variables, no text inside SVG (it shrinks on mobile); put labels in HTML.
