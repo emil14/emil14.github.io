@@ -13,8 +13,8 @@ function setLanguage(language) {
   themeButton.setAttribute('aria-label', ru ? 'Тёмная тема' : 'Dark theme');
   document.title = `${document.body.dataset[ru ? 'titleRu' : 'titleEn']} — ${ru ? 'Эмиль Валеев' : 'Emil Valeev'}`;
   document.querySelector('meta[name="description"]').content = ru
-    ? `${document.body.dataset.titleRu}. Эмиль Валеев — технический лидер. Бэкенд, прикладные LLM и разработка с coding agents.`
-    : `${document.body.dataset.titleEn}. Emil Valeev — Technical Lead. Backend systems, applied LLMs and development with coding agents.`;
+    ? `${document.body.dataset.titleRu}. Эмиль Валеев — техлид. Бэкенд, прикладные LLM и разработка с coding agents.`
+    : `${document.body.dataset.titleEn}. Emil Valeev — Tech Lead. Backend systems, applied LLMs and development with coding agents.`;
   zoomButtons.forEach(button => button.setAttribute('aria-label', `${ru ? 'Открыть крупно' : 'Open full size'}: ${button.firstChild.alt}`));
   document.querySelector('.site-nav').setAttribute('aria-label', ru ? 'Разделы сайта' : 'Main navigation');
   document.querySelector('.wordmark').setAttribute('aria-label', ru ? 'Эмиль Валеев — главная' : 'Emil Valeev — home');
