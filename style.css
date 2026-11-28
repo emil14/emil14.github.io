@@ -106,3 +106,4 @@ footer a:hover { color:var(--accent); }
 .zoom-dialog { max-width:96vw; max-height:94vh; padding:0; border:0; background:none; cursor:zoom-out; }
 .zoom-dialog::backdrop { background:rgba(0,0,0,.82); }
 .zoom-dialog img { display:block; max-width:96vw; max-height:94vh; width:auto; height:auto; }
+.repo-stats { display:block; color:var(--accent); font-size:11px; margin-top:6px; }
