@@ -11,7 +11,7 @@ python3 -m http.server 8014
 - `index.html`: short introduction and project index.
 - `projects/<name>/index.html`: individual project stories, including Neva and Agency.
 - `open-source/index.html`: open-source index.
-- `writing/index.html`: verified publication and video profiles.
+- `writing/index.html`: selected articles, videos and Telegram posts, each linked directly and marked EN/RU; channel profiles at the bottom.
 - `contact/index.html`: email, LinkedIn and native HTML contact form.
 - `contact/thanks/index.html`: post-submission destination.
 - `style.css`: shared responsive layout and both themes.

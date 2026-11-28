@@ -107,3 +107,10 @@ footer a:hover { color:var(--accent); }
 .zoom-dialog::backdrop { background:rgba(0,0,0,.82); }
 .zoom-dialog img { display:block; max-width:96vw; max-height:94vh; width:auto; height:auto; }
 .repo-stats { display:block; color:var(--accent); font-size:11px; margin-top:6px; }
+.work-section + .work-section { margin-top:56px; }
+.work-row { position:relative; grid-template-columns:23% 1fr auto; }
+.work-row .row-link::after { content:""; position:absolute; inset:0; }
+.langs { position:relative; z-index:1; display:flex; gap:6px; }
+.langs a { color:var(--accent); font-size:11px; letter-spacing:.4px; border:1px solid var(--line); border-radius:999px; padding:3px 9px; }
+.langs a:hover { background:var(--panel); }
+@media(max-width:760px) { .work-row { grid-template-columns:1fr auto; } .work-row > .langs { grid-column:2; grid-row:1/3; } }
